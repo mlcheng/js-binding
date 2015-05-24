@@ -12,9 +12,14 @@
 					age: 23,
 					name: "Michael"
 				};
+
 				var hello = document.getElementById("hello");
 				var here = document.getElementById("here");
+
+				//bind the hello input and here div to the data (person.name)
 				iqwerty.binding.bind(person, "name", [hello, here]);
+
+				//change the data
 				person.name = "Michael Cheng";
 			}
 		</script>
