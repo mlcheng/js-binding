@@ -1,0 +1,813 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"autocomplete_sugg",
+				"autocomplete_suggestion_ul"
+			],
+			[
+				"autoc",
+				"autocomplete_suggestion"
+			],
+			[
+				"selec",
+				"selection_index〔variable〕"
+			],
+			[
+				"suggestion",
+				"suggestionsPanel"
+			],
+			[
+				"sugges",
+				"suggestionsPanel〔variable〕"
+			],
+			[
+				"getsug",
+				"getSuggestionsPanelStage"
+			],
+			[
+				"sugg",
+				"suggestionsPanel"
+			],
+			[
+				"get",
+				"getSuggestionsPanelStage"
+			],
+			[
+				"select",
+				"selectedSuggestion"
+			],
+			[
+				"sele",
+				"selectedSuggestion〔argument〕"
+			],
+			[
+				"down",
+				"downKeyCallback"
+			],
+			[
+				"_input",
+				"_inputChangedListener〔variable〕"
+			],
+			[
+				"input",
+				"inputChangedListener"
+			],
+			[
+				"_in",
+				"_inputChangedListener〔variable〕"
+			],
+			[
+				"getInput",
+				"getInputChangedListener"
+			],
+			[
+				"tag",
+				"tagChangedListener"
+			],
+			[
+				"_sear",
+				"_searchFilter"
+			],
+			[
+				"sear",
+				"searchSuggestionAuthority"
+			],
+			[
+				"getSearch",
+				"getSearchSuggestionAuthority〔function〕"
+			],
+			[
+				"aut",
+				"autocompleteWrapperStage"
+			],
+			[
+				"_autoco",
+				"_autocompleteWrapperStage"
+			],
+			[
+				"_autoc",
+				"_autocompleteWrapperStage〔variable〕"
+			],
+			[
+				"getAutocompl",
+				"getAutocompleteWrapperStage"
+			],
+			[
+				"getAut",
+				"getAutocompleteWrapperStage〔function〕"
+			],
+			[
+				"getSugges",
+				"getSuggestionsPanelStage"
+			],
+			[
+				"set",
+				"setKeyListener"
+			],
+			[
+				"suggestions",
+				"suggestions_panel〔variable〕"
+			],
+			[
+				"suggest",
+				"suggestions_panel"
+			],
+			[
+				"getA",
+				"getAutocompleteWrapperStage〔function〕"
+			],
+			[
+				"auto",
+				"autocomplete"
+			],
+			[
+				"child",
+				"children〔variable〕"
+			],
+			[
+				"Child",
+				"ChildDropdownLink〔class〕"
+			],
+			[
+				"Dropdo",
+				"DropdownChildren〔class〕"
+			],
+			[
+				"RootD",
+				"RootDropdownLink〔function〕"
+			],
+			[
+				"proto",
+				"prototype"
+			],
+			[
+				"cors",
+				"cors_support〔variable〕"
+			],
+			[
+				"json",
+				"json_encode〔function〕"
+			],
+			[
+				"JSON",
+				"JSON_ERROR_NONE〔constant〕"
+			],
+			[
+				"getEle",
+				"getElementById〔function〕"
+			],
+			[
+				"rel",
+				"rel=〔attribute〕"
+			],
+			[
+				"htm",
+				"htmlspecialchars"
+			],
+			[
+				"pos",
+				"postv"
+			],
+			[
+				"spa",
+				"spaced-between"
+			],
+			[
+				"imagec",
+				"imagecopyresampled"
+			],
+			[
+				"imagecopyre",
+				"imagecopyresized"
+			],
+			[
+				"ca",
+				"can_upload"
+			],
+			[
+				"sponsorE",
+				"sponsorEmailExists"
+			],
+			[
+				"epass",
+				"epassword"
+			],
+			[
+				"global",
+				"global_timestamp"
+			],
+			[
+				"error",
+				"error_location"
+			],
+			[
+				"db_",
+				"db_login_table"
+			],
+			[
+				"mysql",
+				"mysql_close"
+			],
+			[
+				"ap",
+				"approx_address"
+			],
+			[
+				"close",
+				"closeInfoWindows"
+			],
+			[
+				"lengt",
+				"length-1"
+			],
+			[
+				"in",
+				"index"
+			],
+			[
+				"infow",
+				"infoWindow"
+			],
+			[
+				"info",
+				"infoWindows"
+			],
+			[
+				"html",
+				"htmlentities"
+			],
+			[
+				"filter",
+				"filter_var"
+			],
+			[
+				"mysqler",
+				"mysql_error"
+			],
+			[
+				"wc",
+				"wc_id"
+			],
+			[
+				"mysqlnum",
+				"mysql_num_rows"
+			],
+			[
+				"mysql_nm",
+				"mysql_num_rows"
+			],
+			[
+				"rat",
+				"rating_amnt"
+			],
+			[
+				"global_form",
+				"global_formatted_text_sts"
+			],
+			[
+				"global_formatt",
+				"global_formatted_text_lts"
+			],
+			[
+				"comment",
+				"commentAmnt"
+			],
+			[
+				"date_defau",
+				"date_default_timezone_set"
+			],
+			[
+				"logl",
+				"logoLinkEnd"
+			],
+			[
+				"mysql_err",
+				"mysql_error"
+			],
+			[
+				"delay",
+				"delay_amnt"
+			],
+			[
+				"gl",
+				"global_ip"
+			],
+			[
+				"mysql_er",
+				"mysql_error"
+			],
+			[
+				"mysql_num",
+				"mysql_num_rows"
+			],
+			[
+				"navig",
+				"navigationLink"
+			],
+			[
+				"crrent",
+				"current_page"
+			],
+			[
+				"CURLOPT_SS",
+				"CURLOPT_SSL_VERIFYPEER"
+			],
+			[
+				"docume",
+				"document"
+			],
+			[
+				"orig",
+				"orig_opacity"
+			],
+			[
+				"pa",
+				"pageYOffset"
+			],
+			[
+				"document",
+				"documentElement"
+			],
+			[
+				"font-",
+				"font-family"
+			],
+			[
+				"scr",
+				"scrollTimeout"
+			],
+			[
+				"acc",
+				"access_token"
+			],
+			[
+				"scrollto",
+				"scroll_to_bottom"
+			],
+			[
+				"lo",
+				"login_url"
+			],
+			[
+				"req",
+				"request"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 115.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"ssphp",
+				"Set Syntax: PHP"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 424.0
+	},
+	"console":
+	{
+		"height": 129.0,
+		"history":
+		[
+			"import urllib.request,os; pr='Preferences.sublime-settings'; ip='ignored_packages'; n='Package Control'; s=sublime.load_settings(pr); ig=s.get(ip); ig.append(n); s.set(ip,ig); sublime.save_settings('Preferences.sublime-settings'); pf=n+'.sublime-package'; urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler())); by=urllib.request.urlopen('https://packagecontrol.io/'+pf.replace(' ','%20')).read(); open(os.path.join(sublime.installed_packages_path(),pf),'wb').write(by); ig.remove(n); s.set(ip,ig); sublime.save_settings(pr); print('Package Control: 3.0.0 upgrade successful!')",
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) "
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/AppServ/www/playground/binding"
+	],
+	"file_history":
+	[
+		"/C/AppServ/www/playground/mozilla/.htaccess",
+		"/C/AppServ/www/minimal/.htaccess",
+		"/C/AppServ/www/.htaccess",
+		"/C/AppServ/www/playground/mozilla/.git/COMMIT_EDITMSG",
+		"/C/AppServ/www/playground/mozilla/assets/js/autocomplete.js",
+		"/C/AppServ/www/playground/mozilla/.git/TAG_EDITMSG",
+		"/C/Users/Michael/Programming/Android/FreePee/FreePee/res/xml/searchable.xml",
+		"/C/AppServ/www/playground/mozilla/assets/style/normalize.css",
+		"/C/AppServ/www/playground/sass/assets/_normalize.scss",
+		"/C/AppServ/www/playground/mozilla/js/autocomplete.js",
+		"/F/Adobe Photoshop CS6 13.0.1 Final  Multilanguage (cracked dll) [ChingLiu]/ChingLiu.Notes.nfo",
+		"/C/AppServ/www/playground/trend/js/dropdown.js",
+		"/C/AppServ/www/playground/trend/template/dropdown.html",
+		"/C/AppServ/www/playground/trend/js/dataAnalysisController.js",
+		"/C/AppServ/www/playground/trend/class.php",
+		"/C/AppServ/www/playground/trend/handler.php",
+		"/C/AppServ/www/playground/trend/js/todayWeatherController.js",
+		"/C/AppServ/www/playground/trend/css/main.css",
+		"/C/AppServ/www/playground/trend/js/main.js",
+		"/C/AppServ/www/playground/trend/css/todayWeatherStyle.css",
+		"/C/Users/Michael/Documents/Daily Life/Email Signatures/michaelcheng.signature.htm",
+		"/C/Users/Michael/Documents/Daily Life/Email Signatures/iqwerty.signature.htm",
+		"/C/Users/Michael/AppData/Roaming/Sublime Text 3/Packages/SublimeCodeIntel/SublimeCodeIntel.sublime-settings",
+		"/C/Users/Michael/AppData/Roaming/Sublime Text 3/Packages/SublimeCodeIntel/Default (Windows).sublime-mousemap",
+		"/C/Users/Michael/AppData/Roaming/Sublime Text 3/Packages/SublimeCodeIntel/Default (Windows).sublime-keymap",
+		"/C/AppServ/www/asd.php",
+		"/C/AppServ/www/playground/trend/js/easyXDM.min.js",
+		"/C/AppServ/www/playground/trend/.htpasswd",
+		"/C/AppServ/www/playground/trend/.htaccess",
+		"/C/AppServ/www/playground/trend/template/dataAnalysis.html",
+		"/C/AppServ/www/playground/trend/template/todayWeather.html",
+		"/C/AppServ/www/playground/trend/css/dataAnalysisStyle.css",
+		"/C/AppServ/www/playground/trend/js/json2.js",
+		"/C/AppServ/www/playground/copy/rgb_media/source.txt",
+		"/C/AppServ/.htpasswd",
+		"/C/AppServ/www/ntust/peeps/guestbook.php",
+		"/C/AppServ/www/ntust/peeps/modules/Guestbook.php",
+		"/C/AppServ/www/newfino/functions.php",
+		"/C/AppServ/www/michaelcheng.us/functions.php",
+		"/C/AppServ/www/bitesize/index.php",
+		"/C/AppServ/www/321/functions.php",
+		"/C/AppServ/www/huixiang/functions.php",
+		"/C/Users/Michael/Programming/Android/Toolbox/Toolbox/.git/TAG_EDITMSG",
+		"/C/Users/Michael/Programming/Android/Toolbox/Toolbox/.git/COMMIT_EDITMSG",
+		"/C/Users/Michael/Programming/Android/FreePee/FreePee/.git/TAG_EDITMSG",
+		"/C/Users/Michael/Programming/Android/FreePee/FreePee/.git/COMMIT_EDITMSG",
+		"/C/Users/Michael/Programming/Android/FreePee/FreePee/AndroidManifest.xml",
+		"/C/Users/Michael/Programming/Android/FreePee/FreePee/proguard/dump.txt",
+		"/C/AppServ/www/freepee/get.php",
+		"/C/AppServ/www/iqwerty.net/.htaccess",
+		"/C/Users/Michael/.android/avd/MVA4.4.2.avd/hardware-qemu.ini",
+		"/C/Users/Michael/.android/avd/MVA4.4.2.avd/config.ini",
+		"/C/Users/Michael/Downloads/src/com/urbandroid/lux/MainActivity$3.java",
+		"/C/Users/Michael/Downloads/src/com/urbandroid/lux/ui/SystemBarTintManager.java",
+		"/C/Users/Michael/AppData/Local/Temp/Temp1_source.zip/src/com/urbandroid/lux/BootReciever.java",
+		"/C/Users/Michael/AppData/Local/Temp/Temp1_source.zip/src/com/urbandroid/lux/BacklightActivity.java",
+		"/C/Users/Michael/AppData/Local/Temp/Temp1_source.zip/src/com/urbandroid/lux/TwilightService.java",
+		"/C/Users/Michael/AppData/Local/Temp/Temp1_source.zip/src/com/urbandroid/lux/TwilightService$1.java",
+		"/C/AppServ/www/freepee/test.php",
+		"/C/Users/Michael/Programming/Android/FreePee/FreePee/res/layout/activity_view_add_wc.xml",
+		"/C/Users/Michael/Programming/Android/FreePee/FreePee/src/net/iqwerty/freepee/MyLog.java",
+		"/C/AppServ/www/ajax_chatroom/chat.js",
+		"/C/Users/Michael/Programming/Android/Toolbox/.git/TAG_EDITMSG",
+		"/C/Users/Michael/Programming/Android/FreePee/FreePee/src/net/iqwerty/freepee/ViewAddWCActivity.java",
+		"/C/Users/Michael/Programming/Android/Toolbox/.git/COMMIT_EDITMSG",
+		"/C/Users/Michael/Programming/Android/FreePee/FreePee/src/net/iqwerty/freepee/MainActivity.java",
+		"/C/Users/Michael/Programming/Android/FreePee/FreePee/src/net/iqwerty/freepee/Settings.java",
+		"/C/Users/Michael/Programming/Android/FreePee/FreePee/res/values/colors.xml",
+		"/C/Users/Michael/Programming/Android/MyTools/src/me/iqwerty/mytools/KillLine.java",
+		"/C/Users/Michael/Programming/Android/MyTools/AndroidManifest.xml",
+		"/C/Users/Michael/Programming/Android/MyTools/src/me/iqwerty/mytools/ScreenOff.java",
+		"/C/Users/Michael/Programming/Android/MyTools/res/xml/device_admin.xml",
+		"/C/AppServ/www/freepee/.git/COMMIT_EDITMSG",
+		"/C/AppServ/www/freepee/assets/fp.css",
+		"/C/AppServ/www/freepee/assets/asr_admin.php",
+		"/C/AppServ/www/freepee/assets/adm.js",
+		"/C/AppServ/www/freepee/s/upload.php",
+		"/C/AppServ/www/freepee/assets/fp.js",
+		"/C/AppServ/www/freepee/s/login.php",
+		"/C/AppServ/www/freepee/fpadmin.php",
+		"/C/AppServ/www/freepee/functions.php",
+		"/C/AppServ/www/freepee/assets/sponsor.css",
+		"/C/AppServ/www/freepee/.htaccess",
+		"/C/AppServ/www/freepee/mobile/index.php",
+		"/C/AppServ/www/test/.git/COMMIT_EDITMSG",
+		"/C/Users/Michael/.gitconfig",
+		"/C/Users/Michael/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/Michael/_viminfo",
+		"/C/AppServ/www/freepee/asr.php",
+		"/C/AppServ/www/freepee/index.php",
+		"/C/Users/Michael/Programming/Android/FreePee/Legacy/App/changelog.txt",
+		"/C/Users/Michael/Programming/Android/FreePee/Legacy/App/changelog2.txt",
+		"/C/AppServ/www/freepee/appr/status.php",
+		"/C/AppServ/www/freepee/wapp.php",
+		"/C/AppServ/www/freepee/assets/ctrdlogins.php",
+		"/C/Users/Michael/Documents/School/TUT/Mektory Web Design/2014.12.07/index.php",
+		"/C/Users/Michael/Documents/School/TUT/Mektory Web Design/2014.12.07/db.sql",
+		"/C/Users/Michael/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/C/AppServ/www/freepee/freepee.sublime-project",
+		"/C/AppServ/www/freepee/s/index.php",
+		"/C/AppServ/www/freepee/assets/misc.css",
+		"/C/AppServ/www/freepee/assets/cron.php",
+		"/C/AppServ/www/freepee/server/cron.php",
+		"/C/AppServ/www/minimal/assets/cron.php",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/animator/fragment_open_enter.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/grow_fade_in_center.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/interpolator/decelerate_cubic.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/slide_in_left.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/activity_close_enter.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/interpolator/decelerate_quint.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/activity_open_enter.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/push_up_in.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/popup_enter_material.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/grow_fade_in_from_bottom.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/dock_bottom_enter.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/screen_user_enter.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/slide_in_up.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/slide_out_left.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/slide_in_right.xml",
+		"/C/Users/Michael/Applications/Android Developer Tools/SDK/platforms/android-21/data/res/anim/slide_out_right.xml",
+		"/C/Users/Michael/Downloads/ssl.www.key",
+		"/C/Users/Michael/Downloads/ssl2.key",
+		"/C/Users/Michael/Downloads/ssl.key",
+		"/C/AppServ/www/thatscool.info/.htaccess",
+		"/C/AppServ/www/freepee/appr/handler.php",
+		"/C/AppServ/www/freepee/contact.php",
+		"/C/AppServ/www/freepee/class.php",
+		"/C/Users/Michael/AppData/Local/Temp/fz3temp-1/status.php"
+	],
+	"find":
+	{
+		"height": 28.0
+	},
+	"find_in_files":
+	{
+		"height": 112.0,
+		"where_history":
+		[
+			"C:\\Users\\Michael\\Downloads\\src\\com\\urbandroid\\lux",
+			"C:\\Users\\Michael\\Downloads\\source.zip\\src\\com\\urbandroid\\lux",
+			"C:\\AppServ\\www\\freepee"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"bind",
+			"IQ_PREFIX",
+			"iq_prefix",
+			"type",
+			"CLASS_AUTOCOMPLETE_INPUT",
+			"CLASS_AUTOCOMPLETE_SUGGESTION",
+			"injectstyles",
+			"style",
+			"setinputStage",
+			"\"",
+			"dropdown",
+			"\"selected\"",
+			"/*--------------------------------------------*/",
+			"type",
+			"setselecteds",
+			"foreach",
+			"\n             ",
+			"\";",
+			"();",
+			"console.log",
+			"autocomplete",
+			"addevent",
+			"addEventLis",
+			"addeventlis",
+			"getinput",
+			"\"input",
+			"enterCallback",
+			"backspaceCallback",
+			"type",
+			"obj",
+			"type",
+			"showTag",
+			"filter",
+			"Filter",
+			"filter",
+			"tolowercase",
+			"obj",
+			"this",
+			"getsear",
+			"addFilter",
+			"removeFilter",
+			"type",
+			"hidesuggestions",
+			"this.getInputStage()",
+			"type",
+			"suggestions",
+			"type",
+			"indices",
+			"index",
+			"acm",
+			"initAutocomplete",
+			"provider",
+			"type",
+			"root_class",
+			"display",
+			"type",
+			"\\t",
+			"\\n",
+			"\\r\\n",
+			"type",
+			"child",
+			"children",
+			"span",
+			"	\n",
+			"details",
+			"parse",
+			"xmlhttp",
+			"'",
+			"history.",
+			"2006",
+			"512",
+			"windowmanager",
+			"link",
+			"viewWc",
+			"bold",
+			"assets",
+			"putextra",
+			"bundle",
+			"get",
+			"REWRITEBASE",
+			"0",
+			"login",
+			"HTTP_HOST",
+			"h2",
+			" ",
+			"err",
+			"insertlogininf",
+			"\"",
+			"insertlogin",
+			"post",
+			"iqwerty",
+			"POST",
+			"_POST",
+			"session",
+			"*",
+			"handler",
+			"37",
+			"-122",
+			"37",
+			"opening_",
+			"description",
+			"'",
+			"('",
+			"for",
+			"bundle",
+			"dialog",
+			"{$root}assets/images",
+			"setkey",
+			"createkey",
+			"addlis",
+			"amount",
+			"[i]",
+			"i",
+			"sponsored",
+			"#m ",
+			"div",
+			"section",
+			"'",
+			"error",
+			"result",
+			"rating_amnt",
+			"mysql_real_escape_string(",
+			"wc",
+			"WC",
+			"wc",
+			"span",
+			"login",
+			"log()"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			"",
+			"\\\"",
+			"'",
+			"\\\""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		},
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 37.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.5,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 98.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 122.0
+	},
+	"pinned_build_system": "",
+	"project": "binding.sublime-project",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
