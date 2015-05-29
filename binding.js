@@ -2,90 +2,104 @@
 
   "binding.js"
 
-  Created by Michael Cheng on 05/22/2015 20:55
+  Created by Michael Cheng on 05/29/2015 13:44
             http://michaelcheng.us/
             michael@michaelcheng.us
             --All Rights Reserved--
 
 ***********************************************/
 
-"use strict"
+"use strict";
 
 var iqwerty = iqwerty || {};
 
 
+
 iqwerty.binding = (function() {
-	return {
+	function bind(obj, prop, elem) {
+
 		/**
-		 * Bind an object's property to an array of HTML elements.
-		 * @param   obj  An object whose property should be bound
-		 * @param   prop The property of the object
-		 * @param   elem An array of HTML elements that should be bound to the data 
-		 * @return       Returns nothing
+		 * Override the getter and setter for the specified property
 		 */
-		bind: function(obj, prop, elem) {
+		Object.defineProperty(obj, prop, {
+			get: function() {
 
-			/**
-			 * value is the HTML attribute where we can retrieve data from, e.g. "value" for input elements, or "innerHTML" for others
-			 * @type Array
-			 *
-			 * listener is the event that is called should changes occur
-			 * @type Array
-			 */
-			var value = [], listener = [];
-			for(var i=0;i<elem.length;i++) {
-				switch(elem[i].tagName.toLowerCase()) {
-					case iqwerty.binding.elements.ELEMENT_INPUT:
-						value[i] = "value";
-						listener[i] = "input";
-						break;
-					case iqwerty.binding.elements.ELEMENT_P:
-					case iqwerty.binding.elements.ELEMENT_DIV:
-						value[i] = "innerHTML";
-						break;
-					default:
-						break;
-				}
-			}
+			},
 
-			/*
-			Override the getter and setter methods to reflect on the given HTML elements
-			 */
-			Object.defineProperty(obj, prop, {
-				get: function() {
-					return elem[0][value[0]];
-				},
-				set: function(val) {
-					for(var i=0;i<elem.length;i++) {
-						elem[i][value[i]] = val;
+			set: function(val) {
+				// find links of the chain that are related to the specified property
+				var links = bind.prototype.findLink(obj, prop);
+
+				for(var i=0;i<links.length;i++) {
+					var element = bind.prototype.bound[links[i]].elem;
+					var v;
+					if(element.tagName.toLowerCase() == "input") {
+						v = "value";
+					} else {
+						v = "innerHTML";
 					}
-					console.log(obj[prop]);
-				},
-				configurable: true
-			});
 
-
-
-
-			for(var i=0;i<elem.length;i++) {
-				if(listener[i] != null) {
-					var t_val = elem[i][value[i]];
-					elem[i].addEventListener(listener[i], function() {
-						obj[prop] = elem[0][value[0]]; //yeah something may be wrong here...
-					});
+					// emulate binding of data to the element
+					bind.prototype.bound[links[i]].elem[v] = val;
 				}
+			},
+
+			configurable: true
+		});
+
+		// allow the input event to change the data
+		if(elem.tagName.toLowerCase() == "input") {
+			elem.addEventListener("input", function() {
+				obj[prop] = elem.value;
+			});
+		}
+
+		// add the object to the list of bound elements
+		bind.prototype.bound.push({obj, prop, elem});
+	};
+
+	/**
+	 * Find elements that are bound to the same object.
+	 * @param  {Object} obj  The object to find
+	 * @param  {String} prop The property of the object
+	 * @return {Array}       Returns an array of indices of bind.prototype.bound that are bound together
+	 */
+	bind.prototype.findLink = function(obj, prop) {
+		return bind.prototype.bound.map(function(value, index, array) {
+			if(array[index].obj === obj && array[index].prop == prop) {
+				return index;
 			}
-			
-		},
+		});
+	};
 
+	/**
+	 * An array that stores information about which objects are bound together
+	 * @type {Array}
+	 */
+	bind.prototype.bound = [];
 
-		/**
-		 * These are constants for the name of HTML elements.
-		 */
-		elements: {
-			ELEMENT_INPUT: "input",
-			ELEMENT_P: "p",
-			ELEMENT_DIV: "div"
+	/**
+	 * Well...
+	 * @return  Returns nothing
+	 */
+	function bindAll() {
+		var elem = document.querySelectorAll("[data-iq-model]");
+		for(var i=0;i<elem.length;i++) {
+			//yeah...i might need to rethink this
 		}
 	};
+
+
+	return {
+		bind: function(obj, prop, elem) {
+			bind(obj, prop, elem);
+		},
+
+		bindAll: bindAll
+	};
 })();
+
+
+
+// this was meant to bind elements with the data-iq-app, data-iq-model, etc. like angular.
+document.addEventListener("DOMContentLoaded", iqwerty.binding.bindAll);
