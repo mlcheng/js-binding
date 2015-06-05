@@ -40,7 +40,7 @@ iqwerty.binding = (function() {
 					}
 
 					// emulate binding of data to the element
-					bind.prototype.bound[links[i]].elem[v] = val;
+					element[v] = val;
 				}
 			},
 
@@ -55,7 +55,7 @@ iqwerty.binding = (function() {
 		}
 
 		// add the object to the list of bound elements
-		bind.prototype.bound.push({obj, prop, elem});
+		bind.prototype.bound.push({obj:obj, prop:prop, elem:elem});
 	};
 
 	/**
