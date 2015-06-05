@@ -41,7 +41,13 @@ iqwerty.binding = (function() {
 
 					// emulate binding of data to the element
 					element[v] = val;
+
+
+					element = null;
+					v = null;
 				}
+
+				links = null;
 			},
 
 			configurable: true
