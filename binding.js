@@ -30,8 +30,8 @@ iqwerty.binding = (function() {
 				// find links of the chain that are related to the specified property
 				var links = bind.prototype.findLink(obj, prop);
 
-				for(var i=0;i<links.length;i++) {
-					var element = bind.prototype.bound[links[i]].elem;
+				links.forEach(function(link) {
+					var element = bind.prototype.bound[link].elem;
 					var v;
 					if(element.tagName.toLowerCase() == "input") {
 						v = "value";
@@ -45,7 +45,7 @@ iqwerty.binding = (function() {
 
 					element = null;
 					v = null;
-				}
+				});
 
 				links = null;
 			},
