@@ -1,37 +1,101 @@
 # js-data_binding
 
-Data binding in JavaScript usually means knockout.js or angular.js or some other framework/library. I decided to make my own (crude) data binding library just to see what would happen.
+Data binding in JavaScript usually means knockout.js or angular.js or some other framework/library. I decided to make my own  data binding library just to see what would happen.
 
 A demo is available on my [playground](http://www.michaelcheng.us/playground/lib-js/binding/).
 
 ## Usage
-Usage of this library is much harder than angular. For now, to bind data to an element, you must call
+Usage of this library has become much simpler since the first release. There are many ways to bind data, but let's take a look at the easiest first.
 
-```javascript
-iqwerty.binding.bind(person, "name", view);
+```html
+<div data-iq-bind-scope>{person.name} is {person.age} years old!</div>
 ```
 
-Where `person` is an object
+You must specify the `iq-bind-scope` attribute in order for the data to be bound. Here, `person` is an object
 
 ```javascript
-var person = {
+let person = {
 	age: 23,
-	name: "Michael"
+	name: 'Michael'
 };
 ```
 
-And `view` is an element
+To initialize the data binding model, you must call
 
 ```javascript
-var view = document.getElementById('view');
+iqwerty.binding.Model({
+	person: person
+});
 ```
 
-## Future
-In the future I want to do something similar to angular.js.
+The property `person` should be the same as the `person` in the handlebars above. To bind more data to the model, simply add it to the model object.
+
+```javascript
+iqwerty.binding.Model({
+	person: person,
+	birthdays: birthdays
+});
+```
+
+You can add data to the binding model at any time.
+
+### Limitations
+Only one object layer is allowed, e.g. `person.name.firstName` cannot be bound. However, you can work around this by simply setting a new variable.
+
+```javascript
+let name = person.name;
+```
+
+And bind that instead.
+
+## Advanced usage
+There are a few ways you can bind data using the iQwerty data binding library. Keeping the `person` object as an example
+
+```javascript
+let person = {
+	name: 'Michael'
+};
+```
+
+### Attributes
+Data can be bound using the `iq-bind` attribute.
 
 ```html
-<input type="text" data-iq-model="person.name">
 <div data-iq-bind="person.name"></div>
 ```
 
-We'll see how that goes.
+Note that the model binding must also be used here
+
+```javascript
+iqwerty.binding.Model({
+	person: person
+});
+```
+
+### Declaratively
+Data can also be bound declaratively.
+
+```javascript
+iqwerty.binding.Bind(person, 'name', document.getElementById('name'));
+```
+
+Where our template looks like this
+
+```html
+<div id="name"></div>
+```
+
+The `name` would then be bound to this `<div>`.
+
+It is also possible to bind data to an array of elements
+
+```javascript
+iqwerty.binding.Bind(person, 'name', [document.getElementById('el1'), document.getElementById('el2')]);
+```
+
+Where the template looks like
+
+```html
+<div id="el1"></div>
+<div id="el2"></div>
+```
