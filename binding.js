@@ -15,7 +15,7 @@ var iqwerty = iqwerty || {};
 
 iqwerty.binding = (function() {
 
-	var OBJECT_EXP = '([a-zA-Z]+)\.([a-zA-Z]+)';
+	var OBJECT_EXP = '([^\.]+)\.([^\.]+)';
 	var ATTR_BINDING = 'data-iq-bind';
 	var HANDLEBAR_BINDING = 'data-iq-bind-scope';
 
