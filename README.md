@@ -1,4 +1,4 @@
-# js-data_binding
+# js-binding
 
 Data binding in JavaScript usually means knockout.js or angular.js or some other framework/library. I decided to make my own  data binding library just to see what would happen.
 
