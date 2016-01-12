@@ -2,7 +2,7 @@
 
 Data binding in JavaScript usually means knockout.js or angular.js or some other framework/library. I decided to make my own  data binding library just to see what would happen.
 
-A demo is available on my [playground](http://www.michaelcheng.us/playground/lib-js/binding/).
+A demo is available on my [playground](https://www.michaelcheng.us/playground/lib-js/binding/).
 
 ## Usage
 Usage of this library has become much simpler since the first release. There are many ways to bind data, but let's take a look at the easiest first.
