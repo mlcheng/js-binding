@@ -6,7 +6,7 @@ iqwerty.binding = (function() {
 
 	var OBJ_ID = '$$id';
 
-	var VAR_EXP = '([a-zA-Z]+)';
+	var VAR_EXP = '([^\.]+)';
 	var OBJ_EXP = VAR_EXP + '\.' + VAR_EXP;
 	var ATTRIBUTE_BINDING = 'data-iq-bind';
 	var HANDLEBAR_BINDING = 'data-iq-bind-scope';
