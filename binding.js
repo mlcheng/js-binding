@@ -38,9 +38,7 @@ iqwerty.binding = (function() {
 
 		//Set getters/setters
 		Object.defineProperty(obj, prop, {
-			get: () => {
-				return Bind.prototype.Bindings[obj[OBJ_ID]][prop].value
-			},
+			get: () => Bind.prototype.Bindings[obj[OBJ_ID]][prop].value,
 			set: value => {
 				Bind.prototype.Bindings[obj[OBJ_ID]][prop].value = value;
 				Bind.prototype.updateViews(obj[OBJ_ID], prop);
@@ -243,10 +241,10 @@ iqwerty.binding = (function() {
 	 * Parse the page for attributes and handlebars.
 	 * I'm not sure if this should be exposed, let alone needed. Removed from exporting for now.
 	 */
-	function ParsePage() {
-		BindAttributes();
-		BindHandlebars();
-	}
+	// function ParsePage() {
+	// 	BindAttributes();
+	// 	BindHandlebars();
+	// }
 
 	return {
 		Bind: Bind,
