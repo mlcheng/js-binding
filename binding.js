@@ -6,7 +6,7 @@ iqwerty.binding = (function() {
 
 	var OBJ_ID = '$$id';
 
-	var VAR_EXP = '([^\.]+)';
+	var VAR_EXP = '([^\.}]+)';
 	var OBJ_EXP = VAR_EXP + '\.' + VAR_EXP;
 	var ATTRIBUTE_BINDING = 'data-iq-bind';
 	var HANDLEBAR_BINDING = 'data-iq-bind-scope';
@@ -187,13 +187,21 @@ iqwerty.binding = (function() {
 				} while(match);
 				match = null;
 
+				var html = el.innerHTML;
 				handlebars.forEach(handlebar => {
 					var _bind = document.createElement('span');
 					_bind.classList.add(WRAPPER_IDEN);
 					_bind.id = handlebar.id;
-					el.innerHTML = el.innerHTML.replace(handlebar.matched, _bind.outerHTML);
+					html = html.replace(handlebar.matched, _bind.outerHTML);
 					_bind = null;
 				});
+
+
+				//Build the new HTML
+				el.innerHTML = html;
+				html = null;
+
+				
 
 				//This must be separate from the above
 				//If it isn't separated, then the .innerHTML will overwrite the element from before and the reference to the node will be gone.
