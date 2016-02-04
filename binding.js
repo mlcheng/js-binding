@@ -1,3 +1,14 @@
+/***********************************************
+
+  "binding.js"
+
+  Created by Michael Cheng on 05/22/2015 20:55
+            http://michaelcheng.us/
+            michael@michaelcheng.us
+            --All Rights Reserved--
+
+***********************************************/
+
 'use strict';
 
 var iqwerty = iqwerty || {};
