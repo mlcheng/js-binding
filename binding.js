@@ -192,7 +192,7 @@ iqwerty.binding = (function() {
 					handlebars.push({
 						matched: match[0],
 						obj: scoped || match[1],
-						prop: scoped ? match[1] : match[2],
+						prop: (scoped ? match[1] : match[2]).trim(),
 						id: WRAPPER_IDEN + '-' + Bind.prototype.getId()
 					});
 				} while(match);
