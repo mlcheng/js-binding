@@ -23,6 +23,10 @@ iqwerty.binding = (function() {
 	var HANDLEBAR_BINDING = 'data-iq-bind-scope';
 	var WRAPPER_IDEN = 'iq-bind';
 
+	function elementIs(el, type) {
+		return !!type.find(_t => el.tagName.toLowerCase() === _t);
+	}
+
 	function Bind(obj, prop, elems) {
 		//Turn elems into an array if not already
 		if(!(elems instanceof Array)) {
@@ -40,7 +44,7 @@ iqwerty.binding = (function() {
 
 		//Add event listener for inputs to simulate two-way binding
 		elems.forEach(el => {
-			if(el.tagName.toLowerCase() === 'input') {
+			if(elementIs(el, ['input', 'textarea'])) {
 				el.addEventListener('input', () => {
 					obj[prop] = el.value;
 				});
@@ -115,7 +119,7 @@ iqwerty.binding = (function() {
 
 		var _value;
 		elems.forEach(el => {
-			if(el.tagName.toLowerCase() === 'input') {
+			if(elementIs(el, ['input', 'textarea'])) {
 				_value = 'value';
 			} else {
 				_value = 'innerHTML';
@@ -141,6 +145,10 @@ iqwerty.binding = (function() {
 		}
 	};
 
+	function modelsContain(models, object) {
+		return !!Object.keys(models).find(model => object === model);
+	}
+
 	/**
 	 * Binding for elements bound using data-iq-bind attribute
 	 * @param {Object} models The binding models from the user, i.e. objects to bind
@@ -155,6 +163,8 @@ iqwerty.binding = (function() {
 				literal = new RegExp(OBJ_EXP).exec(literal);
 				if(!literal) return;
 				var objName = literal[1];
+				if(!modelsContain(models, objName)) return;
+
 				var obj = models[objName];
 				Bind(obj, literal[2], el);
 
@@ -189,43 +199,48 @@ iqwerty.binding = (function() {
 				do {
 					match = exp.exec(el.innerHTML);
 					if(!match) continue;
+					var objName = scoped || match[1];
+					if(!modelsContain(models, objName)) return;
 					handlebars.push({
 						matched: match[0],
-						obj: scoped || match[1],
+						obj: objName,
 						prop: (scoped ? match[1] : match[2]).trim(),
 						id: WRAPPER_IDEN + '-' + Bind.prototype.getId()
 					});
 				} while(match);
 				match = null;
 
-				var html = el.innerHTML;
-				handlebars.forEach(handlebar => {
-					var _bind = document.createElement('span');
-					_bind.classList.add(WRAPPER_IDEN);
-					_bind.id = handlebar.id;
-					html = html.replace(handlebar.matched, _bind.outerHTML);
-					_bind = null;
-				});
+
+				if(handlebars.length !== 0) {
+					var html = el.innerHTML;
+					handlebars.forEach(handlebar => {
+						var _bind = document.createElement('span');
+						_bind.classList.add(WRAPPER_IDEN);
+						_bind.id = handlebar.id;
+						html = html.replace(handlebar.matched, _bind.outerHTML);
+						_bind = null;
+					});
 
 
-				//Build the new HTML
-				el.innerHTML = html;
-				html = null;
+					//Build the new HTML
+					el.innerHTML = html;
+					html = null;
 
-				
+					
 
-				//This must be separate from the above
-				//If it isn't separated, then the .innerHTML will overwrite the element from before and the reference to the node will be gone.
-				handlebars.forEach(handlebar => {
-					var obj = models[handlebar.obj];
-					var el = document.getElementById(handlebar.id);
-					Bind(obj, handlebar.prop, el);
+					//This must be separate from the above
+					//If it isn't separated, then the .innerHTML will overwrite the element from before and the reference to the node will be gone.
+					handlebars.forEach(handlebar => {
+						var obj = models[handlebar.obj];
+						var el = document.getElementById(handlebar.id);
+						Bind(obj, handlebar.prop, el);
 
-					//Stop id pollution
-					el.removeAttribute('id');
-					obj = null;
-					el = null;
-				});
+						//Stop id pollution
+						el.removeAttribute('id');
+						obj = null;
+						el = null;
+					});
+				}
 
 				scoped = null;
 				exp = null;

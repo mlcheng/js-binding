@@ -11,6 +11,12 @@ Usage of this library has become much simpler since the first release. There are
 <div data-iq-bind-scope>{person.name} is {person.age} years old!</div>
 ```
 
+You may also bind the object to the scope for simpler HTML.
+
+```html
+<div data-iq-bind-scope="person">{name} is {age} years old!</div>
+```
+
 You must specify the `iq-bind-scope` attribute in order for the data to be bound. Here, `person` is an object
 
 ```javascript
