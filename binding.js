@@ -27,6 +27,10 @@ iqwerty.binding = (function() {
 		return !!type.find(_t => el.tagName.toLowerCase() === _t);
 	}
 
+	function elementHas(el, attr) {
+		return attr.some(_a => el.hasAttribute(_a));
+	}
+
 	function Bind(obj, prop, elems) {
 		//Turn elems into an array if not already
 		if(!(elems instanceof Array)) {
@@ -44,9 +48,9 @@ iqwerty.binding = (function() {
 
 		//Add event listener for inputs to simulate two-way binding
 		elems.forEach(el => {
-			if(elementIs(el, ['input', 'textarea'])) {
+			if(elementIs(el, ['input', 'textarea']) || elementHas(el, ['contenteditable'])) {
 				el.addEventListener('input', () => {
-					obj[prop] = el.value;
+					obj[prop] = el.innerHTML || el.value;
 				});
 			}
 		});
@@ -83,7 +87,6 @@ iqwerty.binding = (function() {
 		if(bindings[obj[OBJ_ID]]) return;
 
 		bindings[obj[OBJ_ID]] = {};
-		bindings = null;
 	};
 
 	/**
@@ -106,7 +109,6 @@ iqwerty.binding = (function() {
 		}
 		//Add the bound elements
 		bindings[id][prop].elems.push(...elems);
-		bindings = null;
 	};
 
 	/**
@@ -124,11 +126,13 @@ iqwerty.binding = (function() {
 			} else {
 				_value = 'innerHTML';
 			}
-			el[_value] = Bind.prototype.Bindings[id][prop].value;
-		});
+			var value = Bind.prototype.Bindings[id][prop].value;
 
-		elems = null;
-		_value = null;
+
+			if(el[_value] !== value) {
+				el[_value] = value;
+			}
+		});
 	};
 
 	/**
@@ -167,13 +171,7 @@ iqwerty.binding = (function() {
 
 				var obj = models[objName];
 				Bind(obj, literal[2], el);
-
-				literal = null;
-				objName = null;
-				obj = null;
 			});
-
-			elems = null;
 		}, 0);
 	}
 
@@ -208,46 +206,35 @@ iqwerty.binding = (function() {
 						id: WRAPPER_IDEN + '-' + Bind.prototype.getId()
 					});
 				} while(match);
-				match = null;
 
 
-				if(handlebars.length !== 0) {
-					var html = el.innerHTML;
-					handlebars.forEach(handlebar => {
-						var _bind = document.createElement('span');
-						_bind.classList.add(WRAPPER_IDEN);
-						_bind.id = handlebar.id;
-						html = html.replace(handlebar.matched, _bind.outerHTML);
-						_bind = null;
-					});
+				if(handlebars.length === 0) return;
+				
+				var html = el.innerHTML;
+				handlebars.forEach(handlebar => {
+					var _bind = document.createElement('span');
+					_bind.classList.add(WRAPPER_IDEN);
+					_bind.id = handlebar.id;
+					html = html.replace(handlebar.matched, _bind.outerHTML);
+				});
 
 
-					//Build the new HTML
-					el.innerHTML = html;
-					html = null;
+				//Build the new HTML
+				el.innerHTML = html;
 
-					
+				
 
-					//This must be separate from the above
-					//If it isn't separated, then the .innerHTML will overwrite the element from before and the reference to the node will be gone.
-					handlebars.forEach(handlebar => {
-						var obj = models[handlebar.obj];
-						var el = document.getElementById(handlebar.id);
-						Bind(obj, handlebar.prop, el);
+				//This must be separate from the above
+				//If it isn't separated, then the .innerHTML will overwrite the element from before and the reference to the node will be gone.
+				handlebars.forEach(handlebar => {
+					var obj = models[handlebar.obj];
+					var el = document.getElementById(handlebar.id);
+					Bind(obj, handlebar.prop, el);
 
-						//Stop id pollution
-						el.removeAttribute('id');
-						obj = null;
-						el = null;
-					});
-				}
-
-				scoped = null;
-				exp = null;
-				handlebars = null;
+					//Stop id pollution
+					el.removeAttribute('id');
+				});
 			});
-
-			elems = null;
 		}, 0);
 	}
 
@@ -271,18 +258,8 @@ iqwerty.binding = (function() {
 		BindHandlebars(models);
 	}
 
-	/**
-	 * Parse the page for attributes and handlebars.
-	 * I'm not sure if this should be exposed, let alone needed. Removed from exporting for now.
-	 */
-	// function ParsePage() {
-	// 	BindAttributes();
-	// 	BindHandlebars();
-	// }
-
 	return {
 		Bind: Bind,
 		Model: Model
-		//ParsePage: ParsePage
 	};
 })();
