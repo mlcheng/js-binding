@@ -31,7 +31,7 @@ iqwerty.binding = (function() {
 		return attr.some(_a => el.hasAttribute(_a));
 	}
 
-	function Bind(obj, prop, elems) {
+	function Bind(obj, prop, elems, watchers) {
 		//Turn elems into an array if not already
 		if(!(elems instanceof Array)) {
 			elems = [elems];
@@ -41,13 +41,15 @@ iqwerty.binding = (function() {
 		Bind.prototype.setId(obj);
 
 		//Update the bindings with the property, elements bound, and current value
-		Bind.prototype.updateBindings(obj[OBJ_ID], prop, elems, obj[prop]);
+		Bind.prototype.updateBindings(obj[OBJ_ID], prop, elems, obj[prop], watchers);
 
 		//Set initial bindings to update the view
 		Bind.prototype.updateViews(obj[OBJ_ID], prop);
 
 		//Add event listener for inputs to simulate two-way binding
 		elems.forEach(el => {
+			if(!el) return;
+
 			if(elementIs(el, ['input', 'textarea']) || elementHas(el, ['contenteditable'])) {
 				el.addEventListener('input', () => {
 					obj[prop] = el.innerHTML || el.value;
@@ -59,7 +61,11 @@ iqwerty.binding = (function() {
 		Object.defineProperty(obj, prop, {
 			get: () => Bind.prototype.Bindings[obj[OBJ_ID]][prop].value,
 			set: value => {
-				Bind.prototype.Bindings[obj[OBJ_ID]][prop].value = value;
+				var _obj = Bind.prototype.Bindings[obj[OBJ_ID]][prop];
+				Bind.prototype.notifyWatchers(obj[OBJ_ID], prop, value, _obj.value);
+
+				//Set the new value to the binding model
+				_obj.value = value;
 				Bind.prototype.updateViews(obj[OBJ_ID], prop);
 			},
 			configurable: true
@@ -95,8 +101,9 @@ iqwerty.binding = (function() {
 	 * @param  {String} prop  The property to be bound
 	 * @param  {Array} elems An array containing the HTMLElements to be bound
 	 * @param  {Object} value The value of the object
+	 * @param  {Function} watchers Any user-defined watcher to observe for changes to the object property
 	 */
-	Bind.prototype.updateBindings = (id, prop, elems, value) => {
+	Bind.prototype.updateBindings = (id, prop, elems, value, watchers) => {
 		var bindings = Bind.prototype.Bindings;
 		if(!bindings[id]) {
 			bindings[id] = {};
@@ -104,11 +111,15 @@ iqwerty.binding = (function() {
 		if(!bindings[id][prop]) {
 			bindings[id][prop] = {
 				elems: [],
-				value: value
+				value: value,
+				watchers: []
 			};
 		}
 		//Add the bound elements
 		bindings[id][prop].elems.push(...elems);
+		if(watchers) {
+			bindings[id][prop].watchers.push(watchers);
+		}
 	};
 
 	/**
@@ -121,6 +132,8 @@ iqwerty.binding = (function() {
 
 		var _value;
 		elems.forEach(el => {
+			if(!el) return;
+
 			if(elementIs(el, ['input', 'textarea'])) {
 				_value = 'value';
 			} else {
@@ -133,6 +146,15 @@ iqwerty.binding = (function() {
 				el[_value] = value;
 			}
 		});
+	};
+
+	Bind.prototype.notifyWatchers = (id, prop, newValue, oldValue) => {
+		var watchers = Bind.prototype.Bindings[id][prop].watchers;
+		if(watchers) {
+			watchers.forEach(watcher => {
+				watcher(newValue, oldValue);
+			});
+		}
 	};
 
 	/**
@@ -258,8 +280,14 @@ iqwerty.binding = (function() {
 		BindHandlebars(models);
 	}
 
+
+	function Watch(obj, prop, callback) {
+		Bind(obj, prop, null, callback);
+	}
+
 	return {
 		Bind: Bind,
-		Model: Model
+		Model: Model,
+		Watch: Watch
 	};
 })();
