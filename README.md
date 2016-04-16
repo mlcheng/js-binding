@@ -43,6 +43,12 @@ iqwerty.binding.Model({
 });
 ```
 
+If you're using ES2015, this can be simplified to
+
+```javascript
+iqwerty.binding.Model({person, birthdays});
+```
+
 You can add data to the binding model at any time.
 
 ### Limitations
@@ -105,3 +111,12 @@ Where the template looks like
 <div id="el1"></div>
 <div id="el2"></div>
 ```
+
+### Watchers
+A watcher function can also be bound to the object changes.
+
+```javascript
+iqwerty.binding.Watch(person, 'name', (newValue, oldValue) => console.log(newValue, oldValue));
+```
+
+The callback function will receive the new and old value of the object.
