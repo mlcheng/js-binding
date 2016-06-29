@@ -5,16 +5,16 @@ Data binding in JavaScript usually means knockout.js or angular.js or some other
 A demo is available on my [playground](https://www.michaelcheng.us/playground/lib-js/binding/).
 
 ## Usage
-Usage of this library has become much simpler since the first release. There are many ways to bind data, but let's take a look at the easiest first.
+Usage of this library has become much more powerful since the last release. There are many ways to bind data, but let's take a look at the easiest first.
 
 ```html
-<div data-iq-bind-scope>{person.name} is {person.age} years old!</div>
+<div data-iq-bind>{person.name} is {person.age} years old!</div>
 ```
 
 You may also bind the object to the scope for simpler HTML.
 
 ```html
-<div data-iq-bind-scope="person">{name} is {age} years old!</div>
+<div data-iq-bind="person">{name} is {age} years old!</div>
 ```
 
 You must specify the `iq-bind-scope` attribute in order for the data to be bound. Here, `person` is an object
@@ -60,8 +60,10 @@ let name = person.name;
 
 And bind that instead.
 
+Additionally, it is highly recommended to bind all data using one call to `iqwerty.binding.Model()`. It is not *necessary*, but if you encounter problems, try this first.
+
 ## Advanced usage
-There are a few ways you can bind data using the iQwerty data binding library. Keeping the `person` object as an example
+There are a few more ways you can bind data using the iQwerty data binding library. Keeping the `person` object as an example
 
 ```javascript
 let person = {
@@ -70,7 +72,7 @@ let person = {
 ```
 
 ### Attributes
-Data can be bound using the `iq-bind` attribute.
+Data can be bound directly using the `iq-bind` attribute.
 
 ```html
 <div data-iq-bind="person.name"></div>
@@ -88,7 +90,10 @@ iqwerty.binding.Model({
 Data can also be bound declaratively.
 
 ```javascript
-iqwerty.binding.Bind(person, 'name', document.getElementById('name'));
+iqwerty.binding.Bind(person, 'name', [{
+	el: document.getElementById('name'),
+	attrs: ['innerHTML', 'title']
+}]);
 ```
 
 Where our template looks like this
@@ -99,24 +104,29 @@ Where our template looks like this
 
 The `name` would then be bound to this `<div>`.
 
-It is also possible to bind data to an array of elements
-
-```javascript
-iqwerty.binding.Bind(person, 'name', [document.getElementById('el1'), document.getElementById('el2')]);
-```
-
-Where the template looks like
+The introduction of the `attrs` array brings us to the next powerful feature of iQwerty's data binding library. Data can be bound to any attribute of an HTML element.
 
 ```html
-<div id="el1"></div>
-<div id="el2"></div>
+<input data-iq-bind-to="value:person.name;title:person.name" type="text">
 ```
+
+Intuitively, you can see the syntax for the `data-iq-bind-to` attribute is as follows:
+
+`*property*.*value*[;...]`
+
+Additionally, similar to Angular's `ng-if`, we can set a button to be disabled if there is no text (albeit in a clunky manner for now):
+
+```html
+<button data-iq-bind-to="disabled:button.disabled">Submit</button>
+```
+
+How can we change `button.disabled` based on whether or not the `person.name` has a value? Read on to find out!
 
 ### Watchers
 A watcher function can also be bound to the object changes.
 
 ```javascript
-iqwerty.binding.Watch(person, 'name', (newValue, oldValue) => console.log(newValue, oldValue));
+iqwerty.binding.Watch(person, 'name', (newValue, oldValue) => button.disabled = !!newValue);
 ```
 
-The callback function will receive the new and old value of the object.
+The callback function will receive the new and original value of the object.
