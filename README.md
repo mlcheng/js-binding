@@ -60,7 +60,7 @@ let name = person.name;
 
 And bind that instead.
 
-Additionally, it is highly recommended to bind all data using one call to `iqwerty.binding.Model()`. It is not *necessary*, but if you encounter problems, try this first.
+Additionally, it is highly recommended to bind all data using one call to `iqwerty.binding.Model()`. It is not *necessary*, but if you encounter problems, try binding relevant data with one call.
 
 ## Advanced usage
 There are a few more ways you can bind data using the iQwerty data binding library. Keeping the `person` object as an example
@@ -112,7 +112,7 @@ The introduction of the `attrs` array brings us to the next powerful feature of 
 
 Intuitively, you can see the syntax for the `data-iq-bind-to` attribute is as follows:
 
-`*property*.*value*[;...]`
+`property:value[;...]`
 
 Additionally, similar to Angular's `ng-if`, we can set a button to be disabled if there is no text (albeit in a clunky manner for now):
 
