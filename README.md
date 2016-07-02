@@ -1,11 +1,11 @@
 # js-binding
 
-Data binding in JavaScript usually means knockout.js or angular.js or some other framework/library. I decided to make my own  data binding library just to see what would happen.
+Data binding in JavaScript usually means knockout.js or angular.js or some other framework/library. I decided to make my own data binding library just to see what would happen.
 
 A demo is available on my [playground](https://www.michaelcheng.us/playground/lib-js/binding/).
 
 ## Usage
-Usage of this library has become much more powerful since the last release. There are many ways to bind data, but let's take a look at the easiest first.
+Usage of this library has become much more powerful since the last release. Note that there are some breaking changes, most importantly the removal of the `data-iq-bind-scope` attribute. There are many ways to bind data, but let's take a look at the easiest first.
 
 ```html
 <div data-iq-bind>{person.name} is {person.age} years old!</div>
