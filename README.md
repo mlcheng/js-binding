@@ -112,7 +112,7 @@ The introduction of the `attrs` array brings us to the next powerful feature of 
 
 Intuitively, you can see the syntax for the `data-iq-bind-to` attribute is as follows:
 
-`property:value[;...]`
+`attr1[,...attr2]:obj.prop[;...attr3...]`
 
 Additionally, similar to Angular's `ng-if`, we can set a button to be disabled if there is no text (albeit in a clunky manner for now):
 
