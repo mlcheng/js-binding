@@ -22,7 +22,7 @@ Test('Watchers will observe changes')
 		iqwerty.binding.Watch(person, 'firstName', result => watcherResult = result);
 	})
 	.do(() => {
-		person.firstName = 'Michael Le';
+		person.firstName = 'Michael Lee';
 	})
 	.expect(watcherResult)
 	.toBe('Michael Lee');
