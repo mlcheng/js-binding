@@ -591,8 +591,10 @@ iqwerty.binding = (function() {
 			_createModel(pairs[name]);
 		});
 
-		_parseAttributeBindTo();
-		_parseAttributeBind();
+		if(typeof document !== 'undefined') {
+			_parseAttributeBindTo();
+			_parseAttributeBind();
+		}
 	}
 
 	return {
