@@ -130,3 +130,16 @@ iqwerty.binding.Watch(person, 'name', (newValue, oldValue) => button.disabled = 
 ```
 
 The callback function will receive the new and original value of the object.
+
+## Testing
+To test the binding library, you can use NodeJS
+
+```bash
+cd tests && node .
+```
+
+Or, if you're using my [gulpfile](https://github.com/mlcheng/js-gulpfile)
+
+```bash
+gulp test
+```
