@@ -1,11 +1,20 @@
+/***********************************************
+
+  "index.js"
+
+  Created by Michael Cheng on 07/16/2016 17:40
+            http://michaelcheng.us/
+            michael@michaelcheng.us
+            --All Rights Reserved--
+
+***********************************************/
+
 'use strict';
 
 /* globals require, __dirname, iqwerty */
-const inject = require('../../test/inject.js');
-const Test = require('../../test/test.js');
-
-
+const { Test, inject } = require('../../test/test.js');
 inject(__dirname, '../binding.js');
+
 
 let person = {
 	firstName: 'Michael',
