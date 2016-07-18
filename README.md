@@ -132,6 +132,10 @@ iqwerty.binding.Watch(person, 'name', (newValue, oldValue) => button.disabled = 
 The callback function will receive the new and original value of the object.
 
 ## Testing
+Unfortunately, for now, testing the library will require you to have the same folder structure as I do, until such time I am able to think of a way to have a reusable `package.json` across modules.
+
+You will need the [iQwerty testing framework](https://github.com/mlcheng/js-test) or [Quantum.js](https://github.com/mlcheng/js-quantum). Place it in a directory parallel to `binding`
+
 To test the binding library, you can use NodeJS
 
 ```bash
