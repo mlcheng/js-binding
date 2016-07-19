@@ -398,13 +398,13 @@ iqwerty.binding = (function() {
 	 */
 	function _bindHandlebars(el) {
 		var scoped = el.dataset.iqBind;
-		var exp = '{ *?' + (scoped ? VAR_EXP : OBJ_EXP) + ' *?}';
+		var _exp = '{ *?' + (scoped ? VAR_EXP : OBJ_EXP) + ' *?}';
 
 		var els = el.querySelectorAll(`.${BINDING_CLASS_INCOMPLETE}`);
 		return Array.from(els).map(el => {
 			// Must reset the regex (its internal pointer), otherwise it'll null
 			// http://stackoverflow.com/questions/4724701/regexp-exec-returns-null-sporadically
-			exp = new RegExp(exp, 'g');
+			var exp = new RegExp(_exp, 'g');
 
 			var match = exp.exec(el.innerHTML);
 			var obj = _getMappingByObjectName(scoped || match[1].trim());
@@ -441,7 +441,7 @@ iqwerty.binding = (function() {
 	 * This is a limitation due to not(.iq-binding). The binding class applied during the first pass already.
 	 */
 	function _parseAttributeBindTo() {
-		var els = document.querySelectorAll(`[${DATASET_BIND_TO}]:not(.${BINDING_CLASS}`);
+		var els = document.querySelectorAll(`[${DATASET_BIND_TO}]:not(.${BINDING_CLASS})`);
 		Array.from(els).forEach(el => {
 
 			/*

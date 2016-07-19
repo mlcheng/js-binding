@@ -25,7 +25,6 @@ let person = {
 iqwerty.binding.Model({ person });
 
 let watcherResult;
-
 Test('Watchers will observe changes')
 	.do(() => {
 		iqwerty.binding.Watch(person, 'firstName', result => watcherResult = result);
