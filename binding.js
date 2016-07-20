@@ -592,8 +592,11 @@ iqwerty.binding = (function() {
 		});
 
 		if(typeof document !== 'undefined') {
-			_parseAttributeBindTo();
-			_parseAttributeBind();
+			// Defer before parsing DOM
+			setTimeout(() => {
+				_parseAttributeBindTo();
+				_parseAttributeBind();
+			});
 		}
 	}
 
