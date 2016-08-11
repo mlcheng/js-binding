@@ -2,7 +2,7 @@
 
   "binding.js"
 
-  Created by Michael Cheng on 05/22/2015 20:55
+  Created by Michael Cheng on 08/11/2016 09:51
             http://michaelcheng.us/
             michael@michaelcheng.us
             --All Rights Reserved--
@@ -15,59 +15,29 @@ var iqwerty = iqwerty || {};
 
 iqwerty.binding = (function() {
 
-	/*
-	Model property constants
-	 */
-	const VALUE = 'value';
-	const BINDINGS = 'bindings';
-	const EL = 'el';
-	const ATTRS = 'attrs';
-	const WATCHERS = 'watchers';
-	const CHANGER = 'changer';
-	const OBJ = 'obj';
-	const PROP = 'prop';
-
-
-
 	/**
-	 * The class to add to binding elements
-	 * @type {String}
+	 * The private property holding data-binding informatino
+	 * This is injected into all consumed objects
+	 * @type {Object}
 	 */
-	const BINDING_CLASS = 'iq-binding';
+	const IQDB = {
+		iqdb: '__iqdb',
+		model: 'model',
+		bindings: 'bindings',
+		watchers: 'watchers',
 
-	/**
-	 * The class to add to elements that aren't bound correctly, e.g. object doesn't exist
-	 * @type {String}
-	 */
-	const BINDING_CLASS_INCOMPLETE = 'iq-binding-incomplete';
+		el: 'el',
+		attrs: 'attrs',
 
-	/**
-	 * The dataset string for binding to attributes
-	 * @type {String}
-	 */
-	const DATASET_BIND_TO = 'data-iq-bind-to';
+		changer: 'changer',
+		value: 'value',
 
-	/**
-	 * The dataset string for binding data
-	 * @type {String}
-	 */
-	const DATASET_BIND = 'data-iq-bind';
-
-
-
-	/**
-	 * Regular expression for a data binding variable
-	 * @type {String}
-	 */
-	const VAR_EXP = '([^\.}]+)';
-
-	/**
-	 * Regular expression for object.prop notation
-	 * @type {String}
-	 */
-	const OBJ_EXP = VAR_EXP + '\.' + VAR_EXP;
-
-
+		regex: {
+			dataset: '^data-',
+			variable: '([^{}]+)',
+			obj: '{ *?([^{}]+) *?}'
+		}
+	};
 
 	/**
 	 * A map of HTML elements and properties that may fire object model changes
@@ -75,527 +45,354 @@ iqwerty.binding = (function() {
 	 */
 	const CHANGERS = {
 		'input:not([type=checkbox])': {
-			[CHANGER]: ['change', 'input'],
-			[VALUE]: 'value'
+			[IQDB.changer]: ['change', 'input'],
+			[IQDB.value]: 'value'
 		},
 		'input[type=checkbox]': {
-			[CHANGER]: ['change', 'input'],
-			[VALUE]: 'checked'
+			[IQDB.changer]: ['change', 'input'],
+			[IQDB.value]: 'checked'
 		},
 		'textarea': {
-			[CHANGER]: ['change', 'input'],
-			[VALUE]: 'value'
+			[IQDB.changer]: ['change', 'input'],
+			[IQDB.value]: 'value'
 		}
 	};
 
-
-
 	/**
-	 * Removes empty entries from the array
-	 * @param  {Array} array The array to remove empty entries from
-	 * @return {Array}       The filtered array
+	 * Remove empty objects from array
+	 * @param  {Array} arr The array to filter
+	 * @return {Array}     Returns an array with empty objects removed
 	 */
-	const _removeEmpty = array => array.filter(a => !!a);
+	const _filter = arr => arr.filter(o => o);
 
 	/**
-	 * The internal identifier for the object
-	 * @type {String}
+	 * Stringify a string to a more human readable format
+	 * @param  {String} str The string to stringify
+	 * @return {String}     The JSON string or the original string
 	 */
-	const ID = '__id';
+	const _stringify = str => {
+		if(typeof str === 'string' || typeof str === 'boolean') {
+			return str;
+		} else {
+			return JSON.stringify(str, null, 2);
+		}
+	};
 
 	/**
-	 * A unique identifier for objects
-	 * @type {Number}
-	 */
-	var _iden = 1;
-
-
-
-	/**
-	 * The source of truth for data bindings
+	 * Maps object external names to actual objects
+	 * Used with the Model() call
 	 * @type {Object}
 	 */
-	var _MODEL = {};
+	let _NAMEMAP = {};
 
-	/**
-	 * Creates a shell model for the object
-	 * @param  {Object} obj The object to create. It must already be tagged.
-	 */
-	function _createModel(obj) {
-		if(_MODEL.hasOwnProperty(obj[ID])) return;
-		_MODEL[obj[ID]] = {};
+	function _createMapping(objName, obj) {
+		_NAMEMAP[objName] = obj;
+	}
+
+	function _getMappingByName(objName) {
+		return _NAMEMAP[objName];
 	}
 
 	/**
-	 * Create the properties of the object inside the model
-	 * @param  {Object} obj  The object
-	 * @param  {String} prop The property to create
+	 * Inject the `__iqdb` property into the object
+	 * This is used to store all internal iQwerty data-binding information, including the data model
+	 * @param  {Object} obj The object to inject into
 	 */
-	function _createModelProperties(obj, prop) {
-		if(_MODEL[obj[ID]].hasOwnProperty(prop)) return;
-		_MODEL[obj[ID]][prop] = {
-			[VALUE]: obj[prop],
-			[BINDINGS]: [],
-			[WATCHERS]: []
-		};
+	function _injectIQDB(obj) {
+		if(!obj.hasOwnProperty(IQDB.iqdb)) {
+			obj[IQDB.iqdb] = {};
+		}
 	}
 
 	/**
-	 * Update the model's extras, i.e. bindings and watchers
+	 * Initialize the `__iqdb` object for an object
+	 * The object will then look like:
+	 * {
+	 * 	__iqdb: {
+	 * 		firstName: {
+	 * 			model: 'Michael',
+	 * 			bindings: [...{
+	 * 				el: [...HTMLElement],
+	 * 				attrs: [...String]
+	 * 			}],
+	 * 			watchers: [...Function]
+	 * 		}
+	 * 	},
+	 * 	...props
+	 * }
+	 * @param  {[type]} obj  [description]
+	 * @param  {[type]} prop [description]
+	 * @return {[type]}      [description]
+	 */
+	function _initializeIQDBFor(obj, prop) {
+		if(!obj[IQDB.iqdb].hasOwnProperty(prop)) {
+			obj[IQDB.iqdb][prop] = {
+				[IQDB.model]: obj[prop],
+				[IQDB.bindings]: [],
+				[IQDB.watchers]: []
+			};
+		}
+	}
+
+	/**
+	 * Update the data bindings for the property
 	 * @param  {Object} obj      The object
-	 * @param  {String} prop     The property of the object to update
-	 * @param  {Array} bindings An array of bindings
-	 * @param  {Array} watchers An array of watcher functions for the object
+	 * @param  {String} prop     The property to update bindings for
+	 * @param  {Object} bindings A data binding, see _initializeIQDBFor() for an example
 	 */
-	function _updateModelExtras(obj, prop, bindings, watchers) {
-		var _prop = _MODEL[obj[ID]][prop];
-		/*
-		Attach the object bindings
-		 */
-		if(bindings) {
-			bindings.forEach(binding => {
-				var existingBinding = _findBindingWithElement(obj, prop, binding[EL]);
-				if(existingBinding) {
-					/*
-					Element exists already
-					Just add attributes to existing attributes
-					 */
-					binding[ATTRS] = binding[ATTRS].filter(attr => ~~existingBinding[ATTRS].indexOf(attr));
-					existingBinding[ATTRS] = existingBinding[ATTRS].concat(...binding[ATTRS]);
-				} else {
-					// A new element, a new binding
-					_prop[BINDINGS] = _prop[BINDINGS].concat({
-						[EL]: binding[EL],
-						[ATTRS]: binding[ATTRS]
-					});
+	function _updateBindings(obj, prop, bindings) {
+		let oprop = obj[IQDB.iqdb][prop];
 
-					/*
-					Since we have an element not seen before,
-					we should set changers listeners as well now
-					 */
-					var selector = Object.keys(CHANGERS)
-						.find(_selector => !!binding[EL].parentElement.querySelector(_selector));
-					if(selector) {
-						CHANGERS[selector][CHANGER].forEach(changer => {
-							binding[EL].addEventListener(changer, () => {
-								obj[prop] = binding[EL][CHANGERS[selector][VALUE]];
-							});
+		bindings.forEach(binding => {
+			let existing = oprop[IQDB.bindings].find(b => b[IQDB.el] === binding[IQDB.el]);
+			if(existing) {
+				// Element exists, just add attributes
+				binding[IQDB.attrs] = binding[IQDB.attrs].filter(
+					attr => !~existing[IQDB.attrs].indexOf(attr)
+				);
+
+				existing[IQDB.attrs].push(...binding[IQDB.attrs]);
+			} else {
+				// New element
+				oprop[IQDB.bindings] = oprop[IQDB.bindings].concat(binding);
+
+				/*
+				Since it's a new element, we add changers if applicable
+				 */
+				var selected = Object.keys(CHANGERS)
+					.find(s => !!binding[IQDB.el].parentElement.querySelector(s));
+				if(selected) {
+					CHANGERS[selected][IQDB.changer].forEach(changer => {
+						binding[IQDB.el].addEventListener(changer, function() {
+							obj[prop] = binding[IQDB.el][CHANGERS[selected][IQDB.value]];
 						});
-					}
-
-					// Should set iq-binding complete class now, since it should be done
-					// TODO: it might NOT be done if there's more than one binding on the element
-					_addBindingClass(binding[EL]);
+					});
 				}
-			});
-		}
-
-		/*
-		Attach watchers to the object's model
-		 */
-		if(watchers) {
-			_prop[WATCHERS] = _prop[WATCHERS].concat(...watchers);
-		}
-	}
-
-	/**
-	 * Update the model's value
-	 * @param  {Object} obj   The object
-	 * @param  {String} prop  The property of the object to update
-	 * @param  {Object} value The value of the object's property
-	 */
-	function _updateModelValue(obj, prop, value) {
-		_MODEL[obj[ID]][prop][VALUE] = value;
-	}
-
-	/**
-	 * Gets the value of the property
-	 * @param  {Object} obj  The object
-	 * @param  {String} prop The property to get
-	 * @return {Object}      The value of the property
-	 */
-	function _getModelValue(obj, prop) {
-		return _MODEL[obj[ID]][prop][VALUE];
-	}
-
-	/**
-	 * Update the views that are bound to the object
-	 * @param  {Object} obj   The object
-	 * @param  {String} prop  The property that should have its views updated
-	 * @param  {Object} value The value of the object
-	 */
-	function _updateViews(obj, prop, value) {
-		_MODEL[obj[ID]][prop][BINDINGS].forEach(binding => {
-			binding[ATTRS].forEach(attr => {
-				if(binding[EL][attr] !== value) {
-					binding[EL][attr] = value;
-				}
-			});
+			}
 		});
 	}
 
 	/**
-	 * Notify any watcher functions that the underlying object has changed. Calls the watcher function with (newValue, oldValue) as parameters
+	 * Update any binding watchers
 	 * @param  {Object} obj      The object
-	 * @param  {String} prop     The property that has changed
+	 * @param  {String} prop     The property to add a watcher to
+	 * @param  {Function} watchers A function callback that is called when the property changes. It will receive the `newValue` and `oldValue` as parameters
+	 */
+	function _updateWatchers(obj, prop, watchers) {
+		let oprop = obj[IQDB.iqdb][prop];
+		oprop[IQDB.watchers] = oprop[IQDB.watchers].concat(...watchers);
+	}
+
+	/**
+	 * Notify watchers when the object property changes
+	 * @param  {Object} obj      The object
+	 * @param  {String} prop     The property
 	 * @param  {Object} newValue The new value of the property
 	 * @param  {Object} oldValue The old value of the property
 	 */
 	function _notifyWatchers(obj, prop, newValue, oldValue) {
 		if(newValue === oldValue) return;
 
-		_MODEL[obj[ID]][prop][WATCHERS].forEach(watcher => {
+		obj[IQDB.iqdb][prop][IQDB.watchers].forEach(watcher => {
 			watcher(newValue, oldValue);
 		});
 	}
 
 	/**
-	 * Find the binding inside the model that shares the same element
-	 * @param  {Object} obj  The object
-	 * @param  {String} prop The property to check
-	 * @param  {HTMLElement} el   The element to check for
-	 */
-	function _findBindingWithElement(obj, prop, el) {
-		return _MODEL[obj[ID]][prop][BINDINGS].find(binding => binding[EL] === el);
-	}
-
-	/**
-	 * Tag the object with a unique internal identifier
-	 * @param  {Object} obj The object to tag
-	 */
-	function _tag(obj) {
-		if(obj.hasOwnProperty(ID)) return;
-		obj[ID] = _iden++;
-	}
-
-
-
-	/**
-	 * Maps external object names to object references
-	 * {
-	 * 	person: {...}
-	 * }
-	 * @type {Object}
-	 */
-	var _MAP = {};
-
-	/**
-	 * Create the mapping of the object's external name to a reference to the object
-	 * @param  {String} objName The object's external name
-	 * @param  {Object} obj     The object
-	 */
-	function _createMapping(objName, obj) {
-		_tag(obj);
-		_MAP[objName] = obj;
-	}
-
-	/**
-	 * Gets the object based on the object's external name
-	 * @param  {String} objName The external name of the object to retrieve
-	 * @return {Object}         Returns the object with the specified name
-	 */
-	function _getMappingByObjectName(objName) {
-		return _MAP[objName];
-	}
-
-
-
-	/**
-	 * Sets the object getter and setter to initialize binding
-	 * @param  {Object} obj  The object
-	 * @param  {String} prop The property to initialize binding for
+	 * Setup data binding using Object.defineProperty
+	 * @param  {Object} obj  The object to initialize data binding for
+	 * @param  {String} prop The property to watch
 	 */
 	function _initializeDataBinding(obj, prop) {
 		Object.defineProperty(obj, prop, {
-			get: () => _getModelValue(obj, prop),
-			set: value => {
-				// Keep the old value to notify watchers
-				var oldValue = _getModelValue(obj, prop);
+			get: () => obj[IQDB.iqdb][prop][IQDB.model],
+			set(value) {
+				let oldValue = _getModelValue(obj, prop);
 
 				_updateModelValue(obj, prop, value);
 				_updateViews(obj, prop, value);
+
 				_notifyWatchers(obj, prop, value, oldValue);
 			}
 		});
 	}
 
+	function _getModelValue(obj, prop) {
+		return obj[IQDB.iqdb][prop][IQDB.model];
+	}
 
+	function _updateModelValue(obj, prop, value) {
+		obj[IQDB.iqdb][prop][IQDB.model] = value;
+	}
 
-	/**
-	 * Add the iq-binding class to elements that have been bound already
-	 * This implies that the element is binding complete
-	 * @param {HTMLElement} el The element to add the class to
-	 */
-	function _addBindingClass(el) {
-		el.classList.add(BINDING_CLASS);
+	function _updateViews(obj, prop, value) {
+		if(value == null) {
+			value = '';
+		}
+
+		obj[IQDB.iqdb][prop][IQDB.bindings].forEach(binding => {
+			binding[IQDB.attrs].forEach(attr => {
+				let el = binding[IQDB.el];
+				let isDataset = new RegExp(IQDB.regex.dataset).test(attr);
+
+				if(isDataset) {
+					// The attribute is a `data-` attribute
+					let replace = attr.replace(new RegExp(IQDB.regex.dataset), '');
+					if(el.dataset[replace] !== value) {
+						el.dataset[replace] = _stringify(value);
+					}
+				} else {
+					if(el[attr] !== value) {
+						el[attr] = _stringify(value);
+					}
+				}
+			});
+		});
 	}
 
 	/**
-	 * Remove the iq-binding-incomplete class that is added to bindings that aren't complete (possibly because object isn't available in the model yet)
-	 * @param  {HTMLElement} el The element to remove the class from
-	 */
-	function _removeIncompleteBindingClass(el) {
-		el.classList.remove(BINDING_CLASS_INCOMPLETE);
-	}
-
-
-
-	/**
-	 * Get the container of the given text binding
-	 * @param  {String} text The text to find
-	 * @param  {HTMLElement} el   The HTMLElement to start searching for the container
-	 * @return {HTMLElement}      Returns the most immediate element container of the text
+	 * Get the container of a specific string
+	 * @param  {String} text The string to look for
+	 * @param  {HTMLElement} el   A basic starting point to look for the string
+	 * @return {HTMLElement}      Returns the nearest container of the string
 	 */
 	function _getContainerOf(text, el) {
 		return Array.from(el.querySelectorAll('*')).find(
 			child => !child.firstElementChild && child.textContent === text
 		) || el;
-	
 	}
 
-	/**
-	 * Wrap handlebars inside an element with iq-binding elements to aid binding
-	 * @param  {HTMLElement} el The element to replace handlebars
-	 * @return {Array}    Returns an array containing the new bindings of the element
-	 */
 	function _wrapHandlebars(el) {
-		var scoped = el.dataset.iqBind;
-		var exp = '{ *?' + (scoped ? VAR_EXP : OBJ_EXP) + ' *?}';
-
-
-		var html = el.innerHTML;
-		html = html.replace(new RegExp(exp, 'g'), match => {
-			var container = _getContainerOf(match, el);
-
-			if(container.classList.contains(BINDING_CLASS_INCOMPLETE)) {
+		let exp = new RegExp(IQDB.regex.obj, 'g');
+		let html = el.innerHTML;
+		html = html.replace(exp, function(match) {
+			let container = _getContainerOf(match, el);
+			if('iqBindIncomplete' in container.dataset) {
 				return match;
 			}
 
-			return `<span class="${BINDING_CLASS_INCOMPLETE}">${match}</span>`;
+			return `<span data-iq-bind-incomplete>${match}</span>`;
 		});
-
-		/*
-		Only modify the DOM if absolutely necessary, since this is a huge performance hit
-		Also, modifying the innerHTML may kill old references to elements in the model. Which is a no-no here
-		 */
-		if(el.innerHTML !== html) {
-			el.innerHTML = html;
-		}
+		if(el.innerHTML !== html) el.innerHTML = html;
 	}
 
-	/**
-	 * Begin actual data binding of handlebars
-	 * @param  {HTMLElement} el The HTML element to bind handlebars for
-	 * @return {Array}    Returns an array of bindings
-	 * {
-	 * 	obj: {...},
-	 * 	prop: 'name',
-	 * 	bindings: {
-	 * 		el: <>,
-	 * 		attrs: ['innerHTML']
-	 * 	}
-	 * }
-	 */
-	function _bindHandlebars(el) {
-		var scoped = el.dataset.iqBind;
-		var _exp = '{ *?' + (scoped ? VAR_EXP : OBJ_EXP) + ' *?}';
-
-		var els = el.querySelectorAll(`.${BINDING_CLASS_INCOMPLETE}`);
-		return Array.from(els).map(el => {
-			// Must reset the regex (its internal pointer), otherwise it'll null
-			// http://stackoverflow.com/questions/4724701/regexp-exec-returns-null-sporadically
-			var exp = new RegExp(_exp, 'g');
-
-			var match = exp.exec(el.innerHTML);
-			var obj = _getMappingByObjectName(scoped || match[1].trim());
-			if(!obj) return;
-
-			/*
-			Handlebars were originally binding incomplete.
-			Now that we are here, they should be complete
-			Remove the incomplete class
-			Note that the complete class is only added when binding is successful (.Bind())
-			 */
-			_removeIncompleteBindingClass(el);
-
-			return {
-				[OBJ]: obj,
-				[PROP]: scoped ? match[1].trim() : match[2].trim(),
-				[BINDINGS]: {
-					[EL]: el,
-					[ATTRS]: ['innerHTML']
-				}
-			};
-		});
-	}
-
-	/**
-	 * Parse the HTML elements that have the data-iq-bind-to attribute.
-	 * The syntax of this attribute is as follows:
-	 * 
-	 * 	'attr1[,attr2]:object.prop[;attr3:object2.prop]'
-	 *
-	 * The attrs are the attributes that should be bound to the object.prop
-	 * 
-	 * Note that if 'object' differs from 'object2', then they MUST be bound to the Model during the _same_ call to iqwerty.binding.Model()
-	 * This is a limitation due to not(.iq-binding). The binding class applied during the first pass already.
-	 */
-	function _parseAttributeBindTo() {
-		var els = document.querySelectorAll(`[${DATASET_BIND_TO}]:not(.${BINDING_CLASS})`);
+	function _parseBindTo() {
+		let els = document.querySelectorAll('[data-iq-bind-to]');
 		Array.from(els).forEach(el => {
+			let dataset = el.dataset.iqBindTo;
 
-			/*
-			Binding attributes can be separated by semicolons
-			Different objects can be bound too, but keep note that they must be bound during the SAME call to iqwerty.binding.Model()
-			 */
-			var pairs = el.dataset.iqBindTo.split(';');
-
+			let pairs = dataset.split(';');
 			pairs.forEach(pair => {
-				var parts = pair.split(':');
-
-				var attrs = parts[0].split(',');
+				let parts = pair.split(':');
+				let attrs = parts[0].split(',');
 				attrs = attrs.map(a => a.trim());
-				
-				var [objName, objProp] = parts[1].split('.');
-				var obj = _getMappingByObjectName(objName);
-				if(!obj) return;
-				
+				let { obj, prop } = _findObj(parts[1], IQDB.regex.variable);
 
-				Bind(obj, objProp, {
-					[EL]: el,
-					[ATTRS]: attrs
+				// Objects not defined yet, defer to next round
+				if(!(obj || prop)) return;
+				
+				Bind(obj, prop, {
+					[IQDB.el]: el,
+					[IQDB.attrs]: attrs
 				});
 			});
 		});
 	}
 
 	/**
-	 * Parse HTML elements that have the data-iq-bind attribute.
-	 * The attribute has the following 3 possibilities
-	 *
-	 * (empty): the HTML must be bound with {obj.prop}
-	 *
-	 * (objName): the HTML must be bound with {propOfObjName}
-	 *
-	 * (objName.objProp): the HTML will be replaced based on binding
+	 * Either EVERYTHING or NOTHING in the attribute!
 	 */
-	function _parseAttributeBind() {
-		/*
-		The reason for not using
-			:not(.${BINDING_CLASS})
-		is because if an element is already bound and has iq-binding class
-		from data-iq-bind-to, then it will always be incomplete because the
-		query selector will never find incomplete bindings under iq-binding
-		complete ones.
+	function _parseBind() {
+		let els = document.querySelectorAll('[data-iq-bind]:not([data-iq-bind-wrapped]');
 
-		So, filter it from the children instead
-		 */
-		var els = document.querySelectorAll(`[${DATASET_BIND}]`);
+		const __performBind = function(obj, prop, el) {
+			// Objects aren't defined yet; defer to next round
+			if(!(obj || prop)) return;
+
+			Bind(obj, prop, {
+				[IQDB.el]: el,
+				[IQDB.attrs]: ['innerHTML']
+			});
+
+			delete el.dataset.iqBindIncomplete;
+		};
+
 		Array.from(els).forEach(el => {
-			var parts = el.dataset.iqBind.split('.');
+			_wrapHandlebars(el);
 
-			var [objName, objProp] = parts;
-
-			if(objProp) {
-				// Has the property, therefore directly bind to the element
-				// But first, let me take a selfie!
-				// No, first, we should skip it if it's already bound
-				if(el.classList.contains(`${BINDING_CLASS}`)) return;
-				
-				var obj = _getMappingByObjectName(objName);
-				if(!obj) return;
-
-				Bind(obj, objProp, {
-					[EL]: el,
-					[ATTRS]: ['innerHTML']
-				});
-			} else {
-				// Handlebar binding
-				// TODO: this is still not as performant/efficient as I hope
-
-				/*
-				The only time we wish to do wrapping and binding is when the element is binding complete.
-
-				If the element has a complete child but no incomplete child, the element is binding complete, and therefore can be skipped
-				 */
-				if(el.querySelector(`.${BINDING_CLASS}`) &&
-					!el.querySelector(`.${BINDING_CLASS_INCOMPLETE}`)) {
-					return;
-				}
-
-				_wrapHandlebars(el);
-				
-				var bindings = _removeEmpty(_bindHandlebars(el));
-				bindings.forEach(binding => {
-					Bind(binding[OBJ], binding[PROP], binding[BINDINGS]);
-				});
+			if(el.dataset.iqBind !== '') {
+				let { obj, prop } = _findObj(el.dataset.iqBind, IQDB.regex.variable);
+				__performBind(obj, prop, el);
 			}
+
+			el.dataset.iqBindWrapped = 'true';
+		});
+
+		els = document.querySelectorAll('[data-iq-bind-incomplete]');
+		Array.from(els).forEach(el => {
+			let { obj, prop } = _findObj(el.innerHTML, IQDB.regex.obj);
+
+			__performBind(obj, prop, el);
 		});
 	}
 
-
-
 	/**
-	 * The main binding operation. Binds object properties to views and watchers
-	 * @param {Object} obj      The object to bind
-	 * @param {String} prop     The property of the object to bind
-	 * @param {Object} bindings A binding or array of bindings, e.g.
-	 * {
-	 * 	el: HTMLElement
-	 * 	attrs: [...]
-	 * }
-	 * @param {Object} watchers A watcher function or array of watcher functions
+	 * Find the object and properties in a string
+	 * @param  {String} string The obj/prop string, e.g. person.name.first
+	 * @param  {String} regex  A regex string to use to look for the obj/prop pair
+	 * @return {Object}        Returns an object containing the object and property
 	 */
-	function Bind(obj, prop, bindings, watchers) {
+	function _findObj(string, regex) {
+		let match = new RegExp(regex, 'g').exec(string);
+		let _o = match[1].trim().split('.');
+		let mainObject = _getMappingByName(_o.shift());
 
-		// Bindings and watchers should be arrays when used further in the library
-		bindings = Array.isArray(bindings) ? bindings : _removeEmpty([bindings]);
-		watchers = Array.isArray(watchers) ? watchers : _removeEmpty([watchers]);
+		let obj = mainObject, prop;
+		if(typeof mainObject !== 'undefined') {
+			_o.forEach((o, idx) => {
+				if(idx < _o.length - 1) {
+					obj = obj[o] || obj[IQDB.iqdb][o][IQDB.model];
+				} else {
+					prop = o;
+				}
+			});
+		}
 
-
-		_tag(obj);
-		_createModel(obj);
-		_createModelProperties(obj, prop);
-		_updateModelExtras(obj, prop, bindings, watchers);
-
-
-		// Define getters and setters for binding to be able to take place
-		_initializeDataBinding(obj, prop);
-
-
-		// Update the views first so that things don't have to change first to be bound
-		_updateViews(obj, prop, obj[prop]);
-
+		return { obj, prop };
 	}
 
-	/**
-	 * Watch a object property for changes
-	 * @param {Object} obj      The object to watch
-	 * @param {String} prop     The property of the object to watch
-	 * @param {Object} watchers A watcher function or array of watcher functions
-	 */
+	function Bind(obj, prop, bindings, watchers) {
+		bindings = Array.isArray(bindings) ? bindings : _filter([bindings]);
+		watchers = Array.isArray(watchers) ? watchers : _filter([watchers]);
+
+		// Ready
+		_injectIQDB(obj);
+		_initializeIQDBFor(obj, prop);
+
+		// Get set
+		_updateBindings(obj, prop, bindings);
+		_updateWatchers(obj, prop, watchers);
+
+		// Go!
+		_initializeDataBinding(obj, prop);
+
+		// Update views first so that a change is not necessary for first bind
+		_updateViews(obj, prop, _getModelValue(obj, prop));
+	}
+
 	function Watch(obj, prop, watchers) {
 		Bind(obj, prop, null, watchers);
 	}
 
-	/**
-	 * Sets up the binding model. This is needed for attribute binding because the object's external name must be known
-	 * @param {Object} pairs A map of external object names and the reference to the object itself, e.g.
-	 * {
-	 * 	person: person
-	 * }
-	 */
-	function Model(pairs) {
-		Object.keys(pairs).forEach(name => {
-			_createMapping(name, pairs[name]);
-			_createModel(pairs[name]);
+	function Model(models) {
+		Object.keys(models).forEach(name => {
+			_createMapping(name, models[name]);
 		});
 
 		if(typeof document !== 'undefined') {
-			// Defer before parsing DOM
 			setTimeout(() => {
-				_parseAttributeBindTo();
-				_parseAttributeBind();
+				_parseBindTo();
+				_parseBind();
 			});
 		}
 	}
