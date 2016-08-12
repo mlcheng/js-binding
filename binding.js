@@ -36,6 +36,25 @@ iqwerty.binding = (function() {
 			dataset: '^data-',
 			variable: '([^{}]+)',
 			obj: '{ *?([^{}]+) *?}'
+		},
+
+		dataset: {
+			bindIncomplete: {
+				cc: 'iqBindIncomplete',
+				dash: 'data-iq-bind-incomplete'
+			},
+			bindTo: {
+				cc: 'iqBindTo',
+				dash: 'data-iq-bind-to'
+			},
+			bind: {
+				cc: 'iqBind',
+				dash: 'data-iq-bind'
+			},
+			bindWrapped: {
+				cc: 'iqBindWrapped',
+				dash: 'data-iq-bind-wrapped'
+			}
 		}
 	};
 
@@ -67,14 +86,14 @@ iqwerty.binding = (function() {
 
 	/**
 	 * Stringify a string to a more human readable format
-	 * @param  {String} str The string to stringify
+	 * @param  {String} obj The string to stringify
 	 * @return {String}     The JSON string or the original string
 	 */
-	const _stringify = str => {
-		if(typeof str === 'string' || typeof str === 'boolean') {
-			return str;
+	const _stringify = obj => {
+		if(typeof obj === 'string' || typeof obj === 'boolean') {
+			return obj;
 		} else {
-			return JSON.stringify(str, null, 2);
+			return JSON.stringify(obj, null, 2);
 		}
 	};
 
@@ -159,12 +178,13 @@ iqwerty.binding = (function() {
 				/*
 				Since it's a new element, we add changers if applicable
 				 */
-				var selected = Object.keys(CHANGERS)
-					.find(s => !!binding[IQDB.el].parentElement.querySelector(s));
-				if(selected) {
-					CHANGERS[selected][IQDB.changer].forEach(changer => {
+				let selector = Object.keys(CHANGERS).find(
+					s => !!binding[IQDB.el].parentElement.querySelector(s)
+				);
+				if(selector) {
+					CHANGERS[selector][IQDB.changer].forEach(changer => {
 						binding[IQDB.el].addEventListener(changer, function() {
-							obj[prop] = binding[IQDB.el][CHANGERS[selected][IQDB.value]];
+							obj[prop] = binding[IQDB.el][CHANGERS[selector][IQDB.value]];
 						});
 					});
 				}
@@ -267,19 +287,22 @@ iqwerty.binding = (function() {
 		let html = el.innerHTML;
 		html = html.replace(exp, function(match) {
 			let container = _getContainerOf(match, el);
-			if('iqBindIncomplete' in container.dataset) {
+			if(IQDB.dataset.bindIncomplete.cc in container.dataset) {
 				return match;
 			}
 
-			return `<span data-iq-bind-incomplete>${match}</span>`;
+			return `<span ${IQDB.dataset.bindIncomplete.dash}>${match}</span>`;
 		});
 		if(el.innerHTML !== html) el.innerHTML = html;
 	}
 
+	/**
+	 * Parse elements with `data-iq-bind-to`
+	 */
 	function _parseBindTo() {
-		let els = document.querySelectorAll('[data-iq-bind-to]');
+		let els = document.querySelectorAll(`[${IQDB.dataset.bindTo.dash}]`);
 		Array.from(els).forEach(el => {
-			let dataset = el.dataset.iqBindTo;
+			let dataset = el.dataset[IQDB.dataset.bindTo.cc];
 
 			let pairs = dataset.split(';');
 			pairs.forEach(pair => {
@@ -300,10 +323,11 @@ iqwerty.binding = (function() {
 	}
 
 	/**
+	 * Parse elements with `data-iq-bind`
 	 * Either EVERYTHING or NOTHING in the attribute!
 	 */
 	function _parseBind() {
-		let els = document.querySelectorAll('[data-iq-bind]:not([data-iq-bind-wrapped]');
+		let els = document.querySelectorAll(`[${IQDB.dataset.bind.dash}]:not([${IQDB.dataset.bindWrapped.dash}]`);
 
 		const __performBind = function(obj, prop, el) {
 			// Objects aren't defined yet; defer to next round
@@ -314,21 +338,21 @@ iqwerty.binding = (function() {
 				[IQDB.attrs]: ['innerHTML']
 			});
 
-			delete el.dataset.iqBindIncomplete;
+			delete el.dataset[IQDB.dataset.bindIncomplete.cc];
 		};
 
 		Array.from(els).forEach(el => {
 			_wrapHandlebars(el);
 
-			if(el.dataset.iqBind !== '') {
-				let { obj, prop } = _findObj(el.dataset.iqBind, IQDB.regex.variable);
+			if(el.dataset[IQDB.dataset.bind.cc] !== '') {
+				let { obj, prop } = _findObj(el.dataset[IQDB.dataset.bind.cc], IQDB.regex.variable);
 				__performBind(obj, prop, el);
 			}
 
-			el.dataset.iqBindWrapped = 'true';
+			el.dataset[IQDB.dataset.bindWrapped.cc] = 'true';
 		});
 
-		els = document.querySelectorAll('[data-iq-bind-incomplete]');
+		els = document.querySelectorAll(`[${IQDB.dataset.bindIncomplete.dash}]`);
 		Array.from(els).forEach(el => {
 			let { obj, prop } = _findObj(el.innerHTML, IQDB.regex.obj);
 
