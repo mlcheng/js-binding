@@ -1,6 +1,6 @@
 # js-binding
 
-Data binding in JavaScript usually means knockout.js or angular.js or some other framework/library. I decided to make my own data binding library just to see what would happen.
+Data binding in JavaScript usually means Knockout.js or Angular.js or some other framework/library. iQwerty data binding is a simple, no-nonsense library that for easy data binding to your view.
 
 A demo is available on my [playground](https://www.michaelcheng.us/playground/lib-js/binding/).
 
@@ -23,7 +23,7 @@ You may also bind the object **directly** to the attribute. Partial `data-iq-bin
 <span data-iq-bind="person.name"></span> is <span data-iq-bind="person.age"></span> years old!
 ```
 
-You must specify the `iq-bind-scope` attribute in order for the data to be bound. Here, `person` is an object
+Here, `person` is an object
 
 ```javascript
 let person = {
@@ -111,7 +111,7 @@ The introduction of the `attrs` array brings us to the next powerful feature of 
 <input data-iq-bind-to="value:person.details.name.first;title:person.details.name.last" type="text">
 ```
 
-Intuitively, you can see the syntax for the `data-iq-bind-to` attribute is as follows:
+Intuitively, the syntax for the `data-iq-bind-to` attribute is as follows:
 
 `attr1[,...attr2]:obj.prop[;...attr3...]`
 
@@ -119,13 +119,17 @@ Data can also be bound to a `data-` attribute by prefixing with `data-`:
 
 `<div data-iq-bind-to="data-name:person.details.name.first"></div>`
 
+This will result in the following HTML element:
+
+`<div data-name="Michael" data-iq-bind-to="[...]"></div>`
+
 Additionally, similar to Angular's `ng-if`, we can set a button to be disabled if there is no text (albeit in a clunky manner for now):
 
 ```html
 <button data-iq-bind-to="disabled:button.disabled">Submit</button>
 ```
 
-How can we change `button.disabled` based on whether or not the `person.name` has a value? Read on to find out!
+How can we change `button.disabled` based on whether or not the `person.name` has a value? Watcher functions are a nice way to achieve this.
 
 ### Watchers
 A watcher function can also be bound to the object changes.
