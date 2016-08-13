@@ -16,15 +16,15 @@ const { Test, inject } = require('../../test/test.js');
 inject(__dirname, '../binding.js');
 
 
+let watcherResult;
+
+
 let person = {
 	firstName: 'Michael',
 	lastName: 'Cheng',
 	age: 24
 };
-
 iqwerty.binding.Model({ person });
-
-let watcherResult;
 Test('Watchers will observe changes')
 	.do(() => {
 		iqwerty.binding.Watch(person, 'firstName', result => watcherResult = result);
@@ -34,3 +34,22 @@ Test('Watchers will observe changes')
 	})
 	.expect(watcherResult)
 	.toBe('Michael Lee');
+
+
+let cat = {
+	name: 'Garfield',
+	age: 7,
+	about: {
+		hobby: 'eating'
+	}
+};
+iqwerty.binding.Model({ cat });
+Test('Multi-layered objects can be bound')
+	.do(() => {
+		iqwerty.binding.Watch(cat.about, 'hobby', result => watcherResult = result);
+	})
+	.do(() => {
+		cat.about.hobby = 'sleeping';
+	})
+	.expect(watcherResult)
+	.toBe('sleeping');
