@@ -178,9 +178,11 @@ iqwerty.binding = (function() {
 				/*
 				Since it's a new element, we add changers if applicable
 				 */
-				let selector = Object.keys(CHANGERS).find(
-					s => !!binding[IQDB.el].parentElement.querySelector(s)
-				);
+				
+				let selector = Object.keys(CHANGERS).find(s => {
+					let children = Array.from(binding[IQDB.el].parentElement.querySelectorAll(s));
+					return !!children.find(child => child === binding[IQDB.el]);
+				});
 				if(selector) {
 					CHANGERS[selector][IQDB.changer].forEach(changer => {
 						binding[IQDB.el].addEventListener(changer, function() {
