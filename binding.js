@@ -74,7 +74,12 @@ iqwerty.binding = (function() {
 		'textarea': {
 			[IQDB.changer]: ['change', 'input'],
 			[IQDB.value]: 'value'
+		},
+		'[contenteditable]': {
+			[IQDB.changer]: ['change', 'input'],
+			[IQDB.value]: 'textContent'
 		}
+
 	};
 
 	/**
