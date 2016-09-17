@@ -231,17 +231,21 @@ iqwerty.binding = (function() {
 	 * @param  {String} prop The property to watch
 	 */
 	function _initializeDataBinding(obj, prop) {
-		Object.defineProperty(obj, prop, {
-			get: () => obj[IQDB.iqdb][prop][IQDB.model],
-			set(value) {
-				let oldValue = _getModelValue(obj, prop);
+		try {
+			Object.defineProperty(obj, prop, {
+				get: () => obj[IQDB.iqdb][prop][IQDB.model],
+				set(value) {
+					let oldValue = _getModelValue(obj, prop);
 
-				_updateModelValue(obj, prop, value);
-				_updateViews(obj, prop, value);
+					_updateModelValue(obj, prop, value);
+					_updateViews(obj, prop, value);
 
-				_notifyWatchers(obj, prop, value, oldValue);
-			}
-		});
+					_notifyWatchers(obj, prop, value, oldValue);
+				}
+			});
+		} catch(e) {
+			// Already defined
+		}
 	}
 
 	function _getModelValue(obj, prop) {
