@@ -52,7 +52,7 @@ iqwerty.binding.Model({
 If you're using ES2015, this can be simplified to
 
 ```javascript
-iqwerty.binding.Model({person, birthdays});
+iqwerty.binding.Model({ person, birthdays });
 ```
 
 You can add data to the binding model at any time.
