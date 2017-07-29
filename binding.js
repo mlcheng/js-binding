@@ -16,7 +16,7 @@ var iqwerty = iqwerty || {};
 iqwerty.binding = (function() {
 
 	/**
-	 * The private property holding data-binding informatino
+	 * The private property holding data-binding information
 	 * This is injected into all consumed objects
 	 * @type {Object}
 	 */
@@ -183,7 +183,7 @@ iqwerty.binding = (function() {
 				/*
 				Since it's a new element, we add changers if applicable
 				 */
-				
+
 				let selector = Object.keys(CHANGERS).find(s => {
 					let children = Array.from(binding[IQDB.el].parentElement.querySelectorAll(s));
 					return !!children.find(child => child === binding[IQDB.el]);
@@ -324,7 +324,7 @@ iqwerty.binding = (function() {
 
 				// Objects not defined yet, defer to next round
 				if(!(obj || prop)) return;
-				
+
 				Bind(obj, prop, {
 					[IQDB.el]: el,
 					[IQDB.attrs]: attrs
