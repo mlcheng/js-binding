@@ -16,12 +16,16 @@ var iqwerty = iqwerty || {};
 iqwerty.binding = (function() {
 
 	/**
-	 * The private property holding data-binding information
-	 * This is injected into all consumed objects
+	 * Constants for the library.
 	 * @type {Object}
 	 */
 	const IQDB = {
+		/**
+		 * The private property holding data-binding information, including watchers and views. This is injected into all consumed objects.
+		 * @type {Object}
+		 */
 		iqdb: '__iqdb',
+
 		model: 'model',
 		bindings: 'bindings',
 		watchers: 'watchers',
@@ -38,6 +42,10 @@ iqwerty.binding = (function() {
 			obj: '{ *?([^{}]+) *?}'
 		},
 
+		/**
+		 * Labels for datasets (HTML data- attributes) in camelCase and selector forms.
+		 * @type {Object}
+		 */
 		dataset: {
 			bindIncomplete: {
 				cc: 'iqBindIncomplete',
@@ -51,15 +59,15 @@ iqwerty.binding = (function() {
 				cc: 'iqBind',
 				dash: 'data-iq-bind'
 			},
-			bindWrapped: {
-				cc: 'iqBindWrapped',
-				dash: 'data-iq-bind-wrapped'
+			bindComplete: {
+				cc: 'iqBindComplete',
+				dash: 'data-iq-bind-complete'
 			}
 		}
 	};
 
 	/**
-	 * A map of HTML elements and properties that may fire object model changes
+	 * A map of HTML elements and their properties that may fire object model changes. Also includes the property of the element that contains the current value.
 	 * @type {Object}
 	 */
 	const CHANGERS = {
@@ -90,7 +98,7 @@ iqwerty.binding = (function() {
 	const _filter = arr => arr.filter(o => o);
 
 	/**
-	 * Stringify a string to a more human readable format
+	 * Stringify an object to a more human readable format.
 	 * @param  {String} obj The string to stringify
 	 * @return {String}     The JSON string or the original string
 	 */
@@ -103,23 +111,29 @@ iqwerty.binding = (function() {
 	};
 
 	/**
-	 * Maps object external names to actual objects
-	 * Used with the Model() call
+	 * Maps object external labels to the actual objects. For example, the label `person` may be bound to the object `thatPerson`, but in the view, it's bound using `<div>{person.name}</div>`.
+	 * Used with the Model() call.
 	 * @type {Object}
 	 */
 	let _NAMEMAP = {};
 
+	/**
+	 * Creates a mapping from an external label to an object.
+	 */
 	function _createMapping(objName, obj) {
 		_NAMEMAP[objName] = obj;
 	}
 
+	/**
+	 * Gets the object based on the specified object label.
+	 */
 	function _getMappingByName(objName) {
 		return _NAMEMAP[objName];
 	}
 
 	/**
-	 * Inject the `__iqdb` property into the object
-	 * This is used to store all internal iQwerty data-binding information, including the data model
+	 * Inject the `__iqdb` property into the object.
+	 * This is used to store all internal iQwerty data-binding information, including the data model, views, and watchers.
 	 * @param  {Object} obj The object to inject into
 	 */
 	function _injectIQDB(obj) {
@@ -130,7 +144,7 @@ iqwerty.binding = (function() {
 
 	/**
 	 * Initialize the `__iqdb` object for an object
-	 * The object will then look like:
+	 * The object will then look something like:
 	 * {
 	 * 	__iqdb: {
 	 * 		firstName: {
@@ -144,9 +158,8 @@ iqwerty.binding = (function() {
 	 * 	},
 	 * 	...props
 	 * }
-	 * @param  {[type]} obj  [description]
-	 * @param  {[type]} prop [description]
-	 * @return {[type]}      [description]
+	 *
+	 * The initialized object will only contain the current value.
 	 */
 	function _initializeIQDBFor(obj, prop) {
 		if(!obj[IQDB.iqdb].hasOwnProperty(prop)) {
@@ -159,7 +172,7 @@ iqwerty.binding = (function() {
 	}
 
 	/**
-	 * Update the data bindings for the property
+	 * Update the bindings for the given property, for example, if a new view is bound to the object.
 	 * @param  {Object} obj      The object
 	 * @param  {String} prop     The property to update bindings for
 	 * @param  {Object} bindings A data binding, see _initializeIQDBFor() for an example
@@ -170,25 +183,24 @@ iqwerty.binding = (function() {
 		bindings.forEach(binding => {
 			let existing = oprop[IQDB.bindings].find(b => b[IQDB.el] === binding[IQDB.el]);
 			if(existing) {
-				// Element exists, just add attributes
+				// Element already exists, just add missing attributes
 				binding[IQDB.attrs] = binding[IQDB.attrs].filter(
 					attr => !~existing[IQDB.attrs].indexOf(attr)
 				);
 
 				existing[IQDB.attrs].push(...binding[IQDB.attrs]);
 			} else {
-				// New element
+				// Element doesn't exist. Add it to the IQDB.
 				oprop[IQDB.bindings] = oprop[IQDB.bindings].concat(binding);
 
-				/*
-				Since it's a new element, we add changers if applicable
-				 */
-
+				// Since it's a new element, we add changers if applicable. Don't add changers to elements that already exist, otherwise we'd have too many event listeners for the same event.
+				// Find the selector of the current element to find the changers associated with it. Do this by getting the current element's parent and performing a query selector. This is because a query selector cannot be performed on an element itself. Then find which - of the matched elements - is the current element.
 				let selector = Object.keys(CHANGERS).find(s => {
 					let children = Array.from(binding[IQDB.el].parentElement.querySelectorAll(s));
 					return !!children.find(child => child === binding[IQDB.el]);
 				});
 				if(selector) {
+					// Add the event listeners based on the changers for the element.
 					CHANGERS[selector][IQDB.changer].forEach(changer => {
 						binding[IQDB.el].addEventListener(changer, function() {
 							obj[prop] = binding[IQDB.el][CHANGERS[selector][IQDB.value]];
@@ -200,7 +212,7 @@ iqwerty.binding = (function() {
 	}
 
 	/**
-	 * Update any binding watchers
+	 * Update any watchers for the given property.
 	 * @param  {Object} obj      The object
 	 * @param  {String} prop     The property to add a watcher to
 	 * @param  {Function} watchers A function callback that is called when the property changes. It will receive the `newValue` and `oldValue` as parameters
@@ -211,7 +223,7 @@ iqwerty.binding = (function() {
 	}
 
 	/**
-	 * Notify watchers when the object property changes
+	 * Notify and call watchers when the model changes.
 	 * @param  {Object} obj      The object
 	 * @param  {String} prop     The property
 	 * @param  {Object} newValue The new value of the property
@@ -226,9 +238,9 @@ iqwerty.binding = (function() {
 	}
 
 	/**
-	 * Setup data binding using Object.defineProperty
-	 * @param  {Object} obj  The object to initialize data binding for
-	 * @param  {String} prop The property to watch
+	 * Setup data binding using Object.defineProperty.
+	 * @param  {Object} obj  The object to initialize data binding for.
+	 * @param  {String} prop The property to watch.
 	 */
 	function _initializeDataBinding(obj, prop) {
 		try {
@@ -256,12 +268,16 @@ iqwerty.binding = (function() {
 		obj[IQDB.iqdb][prop][IQDB.model] = value;
 	}
 
+	/**
+	 * Update the views when the model changes. This creates the data binding effect.
+	 */
 	function _updateViews(obj, prop, value) {
 		if(value == null) {
 			value = '';
 		}
 
 		obj[IQDB.iqdb][prop][IQDB.bindings].forEach(binding => {
+			// Find attributes that the value should be bound to and update them if they are different.
 			binding[IQDB.attrs].forEach(attr => {
 				let el = binding[IQDB.el];
 				let isDataset = new RegExp(IQDB.regex.dataset).test(attr);
@@ -283,9 +299,9 @@ iqwerty.binding = (function() {
 
 	/**
 	 * Get the container of a specific string
-	 * @param  {String} text The string to look for
-	 * @param  {HTMLElement} el   A basic starting point to look for the string
-	 * @return {HTMLElement}      Returns the nearest container of the string
+	 * @param  {String} text The string to look for.
+	 * @param  {HTMLElement} el   A basic starting point to look for the string.
+	 * @return {HTMLElement}      Returns the nearest container of the string.
 	 */
 	function _getContainerOf(text, el) {
 		return Array.from(el.querySelectorAll('*')).find(
@@ -293,22 +309,29 @@ iqwerty.binding = (function() {
 		) || el;
 	}
 
+	/**
+	 * Find all handlebars in the template of the element and wrap them in a span. The binding is incomplete at this point, but the wrapping provides an easy selector to manipulate the value later.
+	 */
 	function _wrapHandlebars(el) {
 		let exp = new RegExp(IQDB.regex.obj, 'g');
 		let html = el.innerHTML;
-		html = html.replace(exp, function(match) {
+		html = html.replace(exp, match => {
 			let container = _getContainerOf(match, el);
 			if(IQDB.dataset.bindIncomplete.cc in container.dataset) {
+				// If the element is already binding incomplete, then it doesn't need to be re-wrapped. Just return it.
 				return match;
 			}
 
 			return `<span ${IQDB.dataset.bindIncomplete.dash}>${match}</span>`;
 		});
+
+		// Only set the HTML if it is not the same. Fewer reflows FTW.
 		if(el.innerHTML !== html) el.innerHTML = html;
 	}
 
 	/**
-	 * Parse elements with `data-iq-bind-to`
+	 * Parse elements with `data-iq-bind-to`. This is used to bind objects to certain attributes of an element. Syntax is as follows:
+	 * attr1[,...attr2]:obj.prop[;...attr3...]
 	 */
 	function _parseBindTo() {
 		let els = document.querySelectorAll(`[${IQDB.dataset.bindTo.dash}]`);
@@ -334,13 +357,19 @@ iqwerty.binding = (function() {
 	}
 
 	/**
-	 * Parse elements with `data-iq-bind`
-	 * Either EVERYTHING or NOTHING in the attribute!
+	 * Parse elements with `data-iq-bind`. This is used to specify that binding takes place within this element or its children. A value can be specified for this property. This value should be the property that is bound to the element. For example, the following two examples produce the same result:
+	 *
+	 * <div data-iq-bind>{person.name}</div>
+	 *
+	 * <div data-iq-bind="person.name"></div>
 	 */
 	function _parseBind() {
-		let els = document.querySelectorAll(`[${IQDB.dataset.bind.dash}]:not([${IQDB.dataset.bindWrapped.dash}]`);
+		let els = document.querySelectorAll(`[${IQDB.dataset.bind.dash}]:not([${IQDB.dataset.bindComplete.dash}]`);
 
-		const __performBind = function(obj, prop, el) {
+		/**
+		 * Call the external API Bind() for the given object, property, and element. Incomplete bindings are now complete and can be deleted from the element.
+		 */
+		const __performBind = (obj, prop, el) => {
 			// Objects aren't defined yet; defer to next round
 			if(!(obj || prop)) return;
 
@@ -356,13 +385,16 @@ iqwerty.binding = (function() {
 			_wrapHandlebars(el);
 
 			if(el.dataset[IQDB.dataset.bind.cc] !== '') {
+				// Value is specified in the attribute. Bind that value directly to the element.
 				let { obj, prop } = _findObj(el.dataset[IQDB.dataset.bind.cc], IQDB.regex.variable);
 				__performBind(obj, prop, el);
 			}
 
-			el.dataset[IQDB.dataset.bindWrapped.cc] = 'true';
+			// Binding is now complete.
+			el.dataset[IQDB.dataset.bindComplete.cc] = 'true';
 		});
 
+		// Incomplete bindings are for elements that use brackets in the template. Those were not handled above. Find those and perform binding on them as well.
 		els = document.querySelectorAll(`[${IQDB.dataset.bindIncomplete.dash}]`);
 		Array.from(els).forEach(el => {
 			let { obj, prop } = _findObj(el.innerHTML, IQDB.regex.obj);
@@ -372,10 +404,10 @@ iqwerty.binding = (function() {
 	}
 
 	/**
-	 * Find the object and properties in a string
+	 * Find the object and property given a string that represents the object structure.
 	 * @param  {String} string The obj/prop string, e.g. person.name.first
 	 * @param  {String} regex  A regex string to use to look for the obj/prop pair
-	 * @return {Object}        Returns an object containing the object and property
+	 * @return {Object}        Returns an object containing the object and property, e.g. { obj: person.name, prop: 'first' }
 	 */
 	function _findObj(string, regex) {
 		let match = new RegExp(regex, 'g').exec(string);
@@ -396,6 +428,9 @@ iqwerty.binding = (function() {
 		return { obj, prop };
 	}
 
+	/**
+	 * Binds values to elements, attributes, and watcher functions.
+	 */
 	function Bind(obj, prop, bindings, watchers) {
 		bindings = Array.isArray(bindings) ? bindings : _filter([bindings]);
 		watchers = Array.isArray(watchers) ? watchers : _filter([watchers]);
@@ -411,14 +446,20 @@ iqwerty.binding = (function() {
 		// Go!
 		_initializeDataBinding(obj, prop);
 
-		// Update views first so that a change is not necessary for first bind
+		// Update views first so that a change is not necessary for first bind.
 		_updateViews(obj, prop, _getModelValue(obj, prop));
 	}
 
+	/**
+	 * Sets a function to be called whenever a value changes.
+	 */
 	function Watch(obj, prop, watchers) {
 		Bind(obj, prop, null, watchers);
 	}
 
+	/**
+	 * Maps a label to an object. The label can then be used on template bindings. This call is necessary to provide data for all template binding syntaxes.
+	 */
 	function Model(models) {
 		Object.keys(models).forEach(name => {
 			_createMapping(name, models[name]);
