@@ -194,10 +194,13 @@ iqwerty.binding = (function() {
 				oprop[IQDB.bindings] = oprop[IQDB.bindings].concat(binding);
 
 				// Since it's a new element, we add changers if applicable. Don't add changers to elements that already exist, otherwise we'd have too many event listeners for the same event.
-				// Find the selector of the current element to find the changers associated with it. Do this by getting the current element's parent and performing a query selector. This is because a query selector cannot be performed on an element itself. Then find which - of the matched elements - is the current element.
-				let selector = Object.keys(CHANGERS).find(s => {
-					let children = Array.from(binding[IQDB.el].parentElement.querySelectorAll(s));
-					return !!children.find(child => child === binding[IQDB.el]);
+				// Find if the current element is anything that triggers changes.
+				const selector = Object.keys(CHANGERS).find(s => {
+					const possibleMatches = Array.from(
+						document.querySelectorAll(s)
+					);
+					return possibleMatches
+						.some(child => child === binding[IQDB.el]);
 				});
 				if(selector) {
 					// Add the event listeners based on the changers for the element.

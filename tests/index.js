@@ -34,7 +34,6 @@ Test('Watchers will observe changes', ({ expect }) => {
 	expect(watcherResult).toBe('Michael Lee');
 });
 
-
 Test('Multi-layered objects can be bound', ({ expect }) => {
 	let cat = {
 		name: 'Garfield',
@@ -52,4 +51,4 @@ Test('Multi-layered objects can be bound', ({ expect }) => {
 
 	cat.about.hobby = 'sleeping';
 	expect(watcherResult).toBe('sleeping');
-})
+});
