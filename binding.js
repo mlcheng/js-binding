@@ -367,7 +367,7 @@ iqwerty.binding = (function() {
 	 * <div data-iq-bind="person.name"></div>
 	 */
 	function _parseBind() {
-		let els = document.querySelectorAll(`[${IQDB.dataset.bind.dash}]:not([${IQDB.dataset.bindComplete.dash}]`);
+		let els = document.querySelectorAll(`[${IQDB.dataset.bind.dash}]:not([${IQDB.dataset.bindComplete.dash}])`);
 
 		/**
 		 * Call the external API Bind() for the given object, property, and element. Incomplete bindings are now complete and can be deleted from the element.
