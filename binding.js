@@ -11,10 +11,7 @@
 
 'use strict';
 
-var iqwerty = iqwerty || {};
-
-iqwerty.binding = (function() {
-
+export const binding = (() => {
 	/**
 	 * Constants for the library.
 	 * @type {Object}
@@ -92,15 +89,15 @@ iqwerty.binding = (function() {
 
 	/**
 	 * Remove empty objects from array
-	 * @param  {Array} arr The array to filter
-	 * @return {Array}     Returns an array with empty objects removed
+	 * @param {Array} arr The array to filter
+	 * @return {Array} Returns an array with empty objects removed
 	 */
 	const _filter = arr => arr.filter(o => o);
 
 	/**
 	 * Stringify an object to a more human readable format.
-	 * @param  {String} obj The string to stringify
-	 * @return {String}     The JSON string or the original string
+	 * @param {String} obj The string to stringify
+	 * @return {String} The JSON string or the original string
 	 */
 	const _stringify = obj => {
 		if(typeof obj === 'string' || typeof obj === 'boolean') {
@@ -115,7 +112,7 @@ iqwerty.binding = (function() {
 	 * Used with the Model() call.
 	 * @type {Object}
 	 */
-	let _NAMEMAP = {};
+	const _NAMEMAP = {};
 
 	/**
 	 * Creates a mapping from an external label to an object.
@@ -173,15 +170,15 @@ iqwerty.binding = (function() {
 
 	/**
 	 * Update the bindings for the given property, for example, if a new view is bound to the object.
-	 * @param  {Object} obj      The object
-	 * @param  {String} prop     The property to update bindings for
-	 * @param  {Object} bindings A data binding, see _initializeIQDBFor() for an example
+	 * @param {Object} obj The object
+	 * @param {String} prop The property to update bindings for
+	 * @param {Object} bindings A data binding, see _initializeIQDBFor() for an example
 	 */
 	function _updateBindings(obj, prop, bindings) {
-		let oprop = obj[IQDB.iqdb][prop];
+		const oprop = obj[IQDB.iqdb][prop];
 
 		bindings.forEach(binding => {
-			let existing = oprop[IQDB.bindings].find(b => b[IQDB.el] === binding[IQDB.el]);
+			const existing = oprop[IQDB.bindings].find(b => b[IQDB.el] === binding[IQDB.el]);
 			if(existing) {
 				// Element already exists, just add missing attributes
 				binding[IQDB.attrs] = binding[IQDB.attrs].filter(
@@ -216,21 +213,21 @@ iqwerty.binding = (function() {
 
 	/**
 	 * Update any watchers for the given property.
-	 * @param  {Object} obj      The object
-	 * @param  {String} prop     The property to add a watcher to
-	 * @param  {Function} watchers A function callback that is called when the property changes. It will receive the `newValue` and `oldValue` as parameters
+	 * @param {Object} obj The object
+	 * @param {String} prop The property to add a watcher to
+	 * @param {Function} watchers A function callback that is called when the property changes. It will receive the `newValue` and `oldValue` as parameters
 	 */
 	function _updateWatchers(obj, prop, watchers) {
-		let oprop = obj[IQDB.iqdb][prop];
+		const oprop = obj[IQDB.iqdb][prop];
 		oprop[IQDB.watchers] = oprop[IQDB.watchers].concat(...watchers);
 	}
 
 	/**
 	 * Notify and call watchers when the model changes.
-	 * @param  {Object} obj      The object
-	 * @param  {String} prop     The property
-	 * @param  {Object} newValue The new value of the property
-	 * @param  {Object} oldValue The old value of the property
+	 * @param {Object} obj The object
+	 * @param {String} prop The property
+	 * @param {Object} newValue The new value of the property
+	 * @param {Object} oldValue The old value of the property
 	 */
 	function _notifyWatchers(obj, prop, newValue, oldValue) {
 		if(newValue === oldValue) return;
@@ -242,15 +239,15 @@ iqwerty.binding = (function() {
 
 	/**
 	 * Setup data binding using Object.defineProperty.
-	 * @param  {Object} obj  The object to initialize data binding for.
-	 * @param  {String} prop The property to watch.
+	 * @param {Object} obj The object to initialize data binding for.
+	 * @param {String} prop The property to watch.
 	 */
 	function _initializeDataBinding(obj, prop) {
 		try {
 			Object.defineProperty(obj, prop, {
 				get: () => obj[IQDB.iqdb][prop][IQDB.model],
 				set(value) {
-					let oldValue = _getModelValue(obj, prop);
+					const oldValue = _getModelValue(obj, prop);
 
 					_updateModelValue(obj, prop, value);
 					_updateViews(obj, prop, value);
@@ -282,12 +279,12 @@ iqwerty.binding = (function() {
 		obj[IQDB.iqdb][prop][IQDB.bindings].forEach(binding => {
 			// Find attributes that the value should be bound to and update them if they are different.
 			binding[IQDB.attrs].forEach(attr => {
-				let el = binding[IQDB.el];
-				let isDataset = new RegExp(IQDB.regex.dataset).test(attr);
+				const el = binding[IQDB.el];
+				const isDataset = new RegExp(IQDB.regex.dataset).test(attr);
 
 				if(isDataset) {
 					// The attribute is a `data-` attribute
-					let replace = attr.replace(new RegExp(IQDB.regex.dataset), '');
+					const replace = attr.replace(new RegExp(IQDB.regex.dataset), '');
 					if(el.dataset[replace] !== value) {
 						el.dataset[replace] = _stringify(value);
 					}
@@ -302,9 +299,9 @@ iqwerty.binding = (function() {
 
 	/**
 	 * Get the container of a specific string
-	 * @param  {String} text The string to look for.
-	 * @param  {HTMLElement} el   A basic starting point to look for the string.
-	 * @return {HTMLElement}      Returns the nearest container of the string.
+	 * @param {String} text The string to look for.
+	 * @param {HTMLElement} el A basic starting point to look for the string.
+	 * @return {HTMLElement} Returns the nearest container of the string.
 	 */
 	function _getContainerOf(text, el) {
 		return Array.from(el.querySelectorAll('*')).find(
@@ -316,10 +313,10 @@ iqwerty.binding = (function() {
 	 * Find all handlebars in the template of the element and wrap them in a span. The binding is incomplete at this point, but the wrapping provides an easy selector to manipulate the value later.
 	 */
 	function _wrapHandlebars(el) {
-		let exp = new RegExp(IQDB.regex.obj, 'g');
+		const exp = new RegExp(IQDB.regex.obj, 'g');
 		let html = el.innerHTML;
 		html = html.replace(exp, match => {
-			let container = _getContainerOf(match, el);
+			const container = _getContainerOf(match, el);
 			if(IQDB.dataset.bindIncomplete.cc in container.dataset) {
 				// If the element is already binding incomplete, then it doesn't need to be re-wrapped. Just return it.
 				return match;
@@ -337,21 +334,21 @@ iqwerty.binding = (function() {
 	 * attr1[,...attr2]:obj.prop[;...attr3...]
 	 */
 	function _parseBindTo() {
-		let els = document.querySelectorAll(`[${IQDB.dataset.bindTo.dash}]`);
+		const els = document.querySelectorAll(`[${IQDB.dataset.bindTo.dash}]`);
 		Array.from(els).forEach(el => {
-			let dataset = el.dataset[IQDB.dataset.bindTo.cc];
+			const dataset = el.dataset[IQDB.dataset.bindTo.cc];
 
-			let pairs = dataset.split(';');
+			const pairs = dataset.split(';');
 			pairs.forEach(pair => {
-				let parts = pair.split(':');
+				const parts = pair.split(':');
 				let attrs = parts[0].split(',');
 				attrs = attrs.map(a => a.trim());
-				let { obj, prop } = _findObj(parts[1], IQDB.regex.variable);
+				const { obj, prop } = _findObj(parts[1], IQDB.regex.variable);
 
 				// Objects not defined yet, defer to next round
 				if(!(obj || prop)) return;
 
-				Bind(obj, prop, {
+				bind(obj, prop, {
 					[IQDB.el]: el,
 					[IQDB.attrs]: attrs
 				});
@@ -370,13 +367,13 @@ iqwerty.binding = (function() {
 		let els = document.querySelectorAll(`[${IQDB.dataset.bind.dash}]:not([${IQDB.dataset.bindComplete.dash}])`);
 
 		/**
-		 * Call the external API Bind() for the given object, property, and element. Incomplete bindings are now complete and can be deleted from the element.
+		 * Call the external API bind() for the given object, property, and element. Incomplete bindings are now complete and can be deleted from the element.
 		 */
 		const __performBind = (obj, prop, el) => {
 			// Objects aren't defined yet; defer to next round
 			if(!(obj || prop)) return;
 
-			Bind(obj, prop, {
+			bind(obj, prop, {
 				[IQDB.el]: el,
 				[IQDB.attrs]: ['innerHTML']
 			});
@@ -389,7 +386,7 @@ iqwerty.binding = (function() {
 
 			if(el.dataset[IQDB.dataset.bind.cc] !== '') {
 				// Value is specified in the attribute. Bind that value directly to the element.
-				let { obj, prop } = _findObj(el.dataset[IQDB.dataset.bind.cc], IQDB.regex.variable);
+				const { obj, prop } = _findObj(el.dataset[IQDB.dataset.bind.cc], IQDB.regex.variable);
 				__performBind(obj, prop, el);
 			}
 
@@ -400,7 +397,7 @@ iqwerty.binding = (function() {
 		// Incomplete bindings are for elements that use brackets in the template. Those were not handled above. Find those and perform binding on them as well.
 		els = document.querySelectorAll(`[${IQDB.dataset.bindIncomplete.dash}]`);
 		Array.from(els).forEach(el => {
-			let { obj, prop } = _findObj(el.innerHTML, IQDB.regex.obj);
+			const { obj, prop } = _findObj(el.innerHTML, IQDB.regex.obj);
 
 			__performBind(obj, prop, el);
 		});
@@ -408,14 +405,14 @@ iqwerty.binding = (function() {
 
 	/**
 	 * Find the object and property given a string that represents the object structure.
-	 * @param  {String} string The obj/prop string, e.g. person.name.first
-	 * @param  {String} regex  A regex string to use to look for the obj/prop pair
-	 * @return {Object}        Returns an object containing the object and property, e.g. { obj: person.name, prop: 'first' }
+	 * @param {String} string The obj/prop string, e.g. person.name.first
+	 * @param {String} regex  A regex string to use to look for the obj/prop pair
+	 * @return {Object} Returns an object containing the object and property, e.g. { obj: person.name, prop: 'first' }
 	 */
 	function _findObj(string, regex) {
-		let match = new RegExp(regex, 'g').exec(string);
-		let _o = match[1].trim().split('.');
-		let mainObject = _getMappingByName(_o.shift());
+		const match = new RegExp(regex, 'g').exec(string);
+		const _o = match[1].trim().split('.');
+		const mainObject = _getMappingByName(_o.shift());
 
 		let obj = mainObject, prop;
 		if(typeof mainObject !== 'undefined') {
@@ -434,7 +431,7 @@ iqwerty.binding = (function() {
 	/**
 	 * Binds values to elements, attributes, and watcher functions.
 	 */
-	function Bind(obj, prop, bindings, watchers) {
+	function bind(obj, prop, bindings, watchers) {
 		bindings = Array.isArray(bindings) ? bindings : _filter([bindings]);
 		watchers = Array.isArray(watchers) ? watchers : _filter([watchers]);
 
@@ -456,14 +453,14 @@ iqwerty.binding = (function() {
 	/**
 	 * Sets a function to be called whenever a value changes.
 	 */
-	function Watch(obj, prop, watchers) {
-		Bind(obj, prop, null, watchers);
+	function watch(obj, prop, watchers) {
+		bind(obj, prop, null, watchers);
 	}
 
 	/**
 	 * Maps a label to an object. The label can then be used on template bindings. This call is necessary to provide data for all template binding syntaxes.
 	 */
-	function Model(models) {
+	function model(models) {
 		Object.keys(models).forEach(name => {
 			_createMapping(name, models[name]);
 		});
@@ -476,9 +473,5 @@ iqwerty.binding = (function() {
 		}
 	}
 
-	return {
-		Bind,
-		Watch,
-		Model
-	};
+	return { bind, watch, model };
 })();
